@@ -15,7 +15,7 @@ const getAllCourses = async (req, res) => {
 };
 
 // Add a new course
-const addCourses = async (req, res) => {
+const addCourse = async (req, res) => {
     const { courseName, courseCode, instructorName, credits } = req.body;
 
     try {
@@ -86,7 +86,7 @@ const deleteCourse = async (req, res) => {
 // Export controllers
 module.exports = {
     getAllCourses,
-    addCourses,
+    addCourse,
     getById,
     updateCourse,
     deleteCourse
