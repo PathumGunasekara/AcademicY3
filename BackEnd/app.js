@@ -21,7 +21,7 @@ mongoose.connect("mongodb+srv://AcademicAdmin:UsHzE0AhhEcPuH5f@clusteracademic.4
   .then(() => console.log("Connected to MongoDB"))
   .then(() => {
     app.listen(5000, () => {
-      console.log("Server is running on port 5000");
+      console.log("Server are running on port 5000");
     });
   })
   .catch((err) => console.log(err));
