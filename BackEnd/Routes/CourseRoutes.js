@@ -1,5 +1,9 @@
 const express = require("express");
 const router = express.Router();
+
+//Insert model
+const User = require("../Model/CourseModel");
+
 const CourseController = require("../Controllers/CourseController");
 
 router.get("/", CourseController.getAllCourses);

@@ -1,10 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
 const studentRouter = require("./Routes/StudentRoutes");
-const instructorRouter = require("./Routes/InstructorRoutes"); 
+const instructorRouter = require("./Routes/InstructorRoutes");
 const examRouter = require("./Routes/ExamRoutes");
+const courseRouter = require("./Routes/CourseRoutes");
 
 const app = express();
 
@@ -15,6 +15,7 @@ app.use(cors());
 app.use("/students", studentRouter);
 app.use("/instructors", instructorRouter);
 app.use("/exams", examRouter);
+app.use("/courses", courseRouter);
 
 mongoose.connect("mongodb+srv://AcademicAdmin:UsHzE0AhhEcPuH5f@clusteracademic.4hese.mongodb.net/")
   .then(() => {
