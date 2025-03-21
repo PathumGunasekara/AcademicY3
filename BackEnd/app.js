@@ -1,10 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");  // ✅ Import cors
-
+const cors = require("cors"); 
+ 
 const studentRouter = require("./Routes/StudentRoutes");
-const instructorRouter = require("./Routes/InstructerRoutes");
+const instructorRouter = require("./Routes/InstructerRoutes"); 
 const examRouter=require("./Routes/ExamRoutes");
+
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use("/instructors", instructorRouter);
 app.use("/exams", examRouter);
 
 
+
 mongoose.connect("mongodb+srv://AcademicAdmin:UsHzE0AhhEcPuH5f@clusteracademic.4hese.mongodb.net/")
   .then(() => console.log("Connected to MongoDB"))
   .then(() => {
@@ -24,4 +26,4 @@ mongoose.connect("mongodb+srv://AcademicAdmin:UsHzE0AhhEcPuH5f@clusteracademic.4
       console.log("Server are running on port 5000");
     });
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.log(err)); 
