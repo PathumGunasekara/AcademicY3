@@ -5,8 +5,8 @@ const examSchema = new Schema({
 
     courseName:{ 
         type:String, 
-        required:true,
-    },   
+        required:true,  
+    },    
     courseCode:{
         type:String,            
         required:true,    
