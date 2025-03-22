@@ -7,7 +7,7 @@ function StudentNav() {
       <header>
         <div className="flex justify-center p-1 bg-slate-300 mt-5 mx-auto rounded-lg">
           <ul className="flex gap-12 font-bold">
-            <Link to="/UserHomePage">
+            <Link to="/Home">
               <li className="hover:bg-slate-400 text-xl h-12 flex items-center rounded-lg p-2">
                 Home
               </li>
