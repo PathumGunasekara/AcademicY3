@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/students", studentRouter);
-app.use("/instructors", instructerRouter);
+app.use("/instructors", instructerRouter); 
 app.use("/exams", examRouter);
 app.use("/courses", courseRouter);
 
