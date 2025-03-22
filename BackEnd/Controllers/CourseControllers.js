@@ -5,14 +5,14 @@ const getAllCourses = async (req, res) => {
     try {
         const courses = await Course.find();
         if (!courses.length) {
-            return res.status(404).json({ message: "Courses not found" });
+            return res.status(404).json({ message: "No courses found" });
         }
         return res.status(200).json({ courses });
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "Internal server error" }); 
     }
-};
+}; 
 
 // Add a new course
 const addCourse = async (req, res) => {
@@ -30,10 +30,8 @@ const addCourse = async (req, res) => {
 
 // Get course by ID
 const getById = async (req, res) => {
-    const { id } = req.params;
-
     try {
-        const course = await Course.findById(id);
+        const course = await Course.findById(req.params.id);
         if (!course) {
             return res.status(404).json({ message: "Course not found" });
         }
@@ -46,13 +44,10 @@ const getById = async (req, res) => {
 
 // Update course details
 const updateCourse = async (req, res) => {
-    const { id } = req.params;
-    const { courseName, courseCode, instructorName, credits } = req.body;
-
     try {
         const updatedCourse = await Course.findByIdAndUpdate(
-            id,
-            { courseName, courseCode, instructorName, credits },
+            req.params.id,
+            req.body,
             { new: true, runValidators: true }
         );
 
@@ -69,10 +64,8 @@ const updateCourse = async (req, res) => {
 
 // Delete course
 const deleteCourse = async (req, res) => {
-    const { id } = req.params;
-
     try {
-        const deletedCourse = await Course.findByIdAndDelete(id);
+        const deletedCourse = await Course.findByIdAndDelete(req.params.id);
         if (!deletedCourse) {
             return res.status(404).json({ message: "Unable to delete course" });
         }

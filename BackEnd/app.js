@@ -1,3 +1,4 @@
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -6,10 +7,10 @@ const instructerRouter = require("./Routes/InstructerRoutes");
 const examRouter = require("./Routes/ExamRoutes");
 const courseRouter = require("./Routes/CourseRoutes");
 
-const app = express();
+const app = express(); 
 
 // Middleware
-app.use(express.json());
+app.use(express.json()); 
 app.use(cors());
 
 app.use("/students", studentRouter);
