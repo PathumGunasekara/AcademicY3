@@ -14,5 +14,5 @@ router.put("/:id",instructorController.updateInstructor);
 router.delete("/:id",instructorController.deleteInstructor);
 
 //export
-module.exports=router;
+module.exports = router;
 
