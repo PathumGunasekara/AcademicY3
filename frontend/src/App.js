@@ -6,6 +6,7 @@ import RegisterForm from "./Components/Register/RegisterForm";
 import LoginForm from "./Components/Login/LoginForm";
 import Home from "./Components/UserHomePage/Home";
 import StudentHome from "./Components/Student/StudentHome/StudentHome";
+import Exams from './Components/Exam/Exams';
 
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
             <Route path="/StudentHome" element={<StudentHome/>}/>
             <Route path="/login" element={<LoginForm />} />
             <Route path="/" element={<RegisterForm />} />
+            <Route path="/exams" element={<Exams />} />
+
         </Routes>
       </React.Fragment>
     </div>
