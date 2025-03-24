@@ -56,7 +56,7 @@ const AddExam = () => {
     if (error) {
       alert('Please fix the error before submitting.');
       return;
-    }
+    } 
 
     try {
       const response = await axios.post('http://Localhost:5000/exams', formData);
