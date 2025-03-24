@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -51,6 +52,13 @@ const Exams = () => {
   return (
     <div>
       <h1>Exams List</h1>
+
+      {/*Add Exam button */}
+      <Link to="/addexam">
+        <button>Add Exam</button>
+      </Link>
+
+
       {exams.length > 0 ? (
         <table>
           <thead>
@@ -97,3 +105,5 @@ const Exams = () => {
 };
 
 export default Exams; 
+
+

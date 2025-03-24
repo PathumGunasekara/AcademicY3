@@ -81,7 +81,7 @@ const UpdateExam = () => {
       const response = await axios.put(`http://localhost:5000/exams/${id}`, formData);
       if (response.status === 200) {
         alert('Exam updated successfully!');
-        navigate('/examdetails');
+        navigate('/exams');
       }
     } catch (err) {
       alert('Failed to update exam. Please try again.');

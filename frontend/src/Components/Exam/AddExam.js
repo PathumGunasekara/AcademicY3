@@ -62,7 +62,7 @@ const AddExam = () => {
       const response = await axios.post('http://Localhost:5000/exams', formData);
       if (response.status === 200) {
         alert('Exam added successfully!');
-        navigate('/examdetails');
+        navigate('/exams');
         // Clear the form after successful submission
         setFormData({
           courseName: '',
