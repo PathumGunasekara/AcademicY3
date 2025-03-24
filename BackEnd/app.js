@@ -1,4 +1,3 @@
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -6,21 +5,24 @@ const studentRouter = require("./Routes/StudentRoutes");
 const instructerRouter = require("./Routes/InstructerRoutes");
 const examRouter = require("./Routes/ExamRoutes");
 const courseRouter = require("./Routes/CourseRoutes");
-const userrouter = require("./Routes/UserRoutes");  
+const userrouter = require("./Routes/UserRoutes");
 
-const app = express(); 
+const app = express();
 
 // Middleware
-app.use(express.json()); 
+app.use(express.json());
 app.use(cors());
 
 app.use("/students", studentRouter);
-app.use("/instructors", instructerRouter); 
+app.use("/instructors", instructerRouter);
 app.use("/exams", examRouter);
 app.use("/courses", courseRouter);
-app.use("/users",userrouter);
+app.use("/users", userrouter);
 
-mongoose.connect("mongodb+srv://AcademicAdmin:UsHzE0AhhEcPuH5f@clusteracademic.4hese.mongodb.net/")
+mongoose
+  .connect(
+    "mongodb+srv://AcademicAdmin:UsHzE0AhhEcPuH5f@clusteracademic.4hese.mongodb.net/"
+  )
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(5000, () => {

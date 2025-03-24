@@ -1,47 +1,53 @@
-const mongoose = require ("mongoose");
-const Schema= mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const availabilitySchema = new Schema({
+const availabilitySchema = new Schema(
+  {
     day: {
-        type: String,
-        required: [true, 'Day is required'],
+      type: String,
+      required: [true, "Day is required"],
     },
     startTime: {
-        type: String,
-        required: [true, 'Start time is required'],
+      type: String,
+      required: [true, "Start time is required"],
     },
     endTime: {
-        type: String,
-        required: [true, 'End time is required'],
-    }
-}, { _id: false });
+      type: String,
+      required: [true, "End time is required"],
+    },
+  },
+  { _id: false }
+);
 
-const instructorSchema = new Schema({
+const instructorSchema = new Schema(
+  {
     name: {
-        type: String,
-        required: [true, 'Name is required'],
-        trim: true,
+      type: String,
+      required: [true, "Name is required"],
+      trim: true,
     },
     email: {
-        type: String,
-        required: [true, 'Email is required'],
-        unique: true,
-        lowercase: true,
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
     },
     phone: {
-        type: String,
-        required: [true, 'Phone number is required'],
+      type: String,
+      required: [true, "Phone number is required"],
     },
     image: {
-        type: String,
-        required: [true, 'Instructor image is required'],
+      type: String,
+      required: [true, "Instructor image is required"],
     },
     availability: [availabilitySchema],
-}, {
-    timestamps: true
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = {
-    Instructor: mongoose.model("InstructorModel", instructorSchema),
-    Availability: mongoose.model("AvailabilityModel", availabilitySchema)
+  Instructor: mongoose.model("InstructorModel", instructorSchema),
+  Availability: mongoose.model("AvailabilityModel", availabilitySchema),
 };
