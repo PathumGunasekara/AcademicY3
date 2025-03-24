@@ -29,7 +29,13 @@ const AddCourse = ({ refreshCourses }) => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        border: "1px solid #ccc",
+        padding: "20px",
+        marginBottom: "20px",
+      }}
+    >
       <h2 className="text-xl font-semibold">Add New Course</h2>
       <input
         name="courseName"
@@ -68,6 +74,8 @@ const AddCourse = ({ refreshCourses }) => {
         onChange={handleChange}
         value={course.courseDescription}
       />
+
+      {/* ✅ Make sure this button is visible */}
       <button
         onClick={handleSubmit}
         style={{
@@ -75,6 +83,8 @@ const AddCourse = ({ refreshCourses }) => {
           color: "white",
           padding: "10px",
           borderRadius: "5px",
+          display: "block",
+          marginTop: "10px",
         }}
       >
         Add Course
