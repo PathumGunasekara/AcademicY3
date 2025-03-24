@@ -1,51 +1,51 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddExam = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    courseName: '',
-    courseCode: '',
-    examType: '',
-    date: '',
-    startTime: '',
-    duration: '',
-    endTime: '',
-    location: ''
+    courseName: "",
+    courseCode: "",
+    examType: "",
+    date: "",
+    startTime: "",
+    duration: "",
+    endTime: "",
+    location: "",
   });
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     // Validation for Course Name (no numbers allowed)
-    if (name === 'courseName' && /\d/.test(value)) {
-      setError('Course name should not contain numbers.');
+    if (name === "courseName" && /\d/.test(value)) {
+      setError("Course name should not contain numbers.");
       return;
     }
 
     // Validation for Date (cannot be a past date)
-    if (name === 'date') {
+    if (name === "date") {
       const selectedDate = new Date(value);
       const currentDate = new Date();
       currentDate.setHours(0, 0, 0, 0); // Reset time to midnight for accurate comparison
 
       if (selectedDate < currentDate) {
-        setError('You cannot select a past date.');
+        setError("You cannot select a past date.");
         return;
       }
     }
 
     // Clear any previous errors
-    setError('');
+    setError("");
 
     // Update the form data
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -54,30 +54,33 @@ const AddExam = () => {
 
     // Check if there is any error before submitting
     if (error) {
-      alert('Please fix the error before submitting.');
+      alert("Please fix the error before submitting.");
       return;
-    } 
+    }
 
     try {
-      const response = await axios.post('http://Localhost:5000/exams', formData);
+      const response = await axios.post(
+        "http://Localhost:5000/exams",
+        formData
+      );
       if (response.status === 200) {
-        alert('Exam added successfully!');
-        navigate('/exams');
+        alert("Exam added successfully!");
+        navigate("/exams");
         // Clear the form after successful submission
         setFormData({
-          courseName: '',
-          courseCode: '',
-          examType: '',
-          date: '',
-          startTime: '',
-          duration: '',
-          endTime: '',
-          location: ''
+          courseName: "",
+          courseCode: "",
+          examType: "",
+          date: "",
+          startTime: "",
+          duration: "",
+          endTime: "",
+          location: "",
         });
       }
     } catch (error) {
-      console.error('Error adding exam:', error);
-      alert('Failed to add exam. Please try again.');
+      console.error("Error adding exam:", error);
+      alert("Failed to add exam. Please try again.");
     }
   };
 
@@ -94,7 +97,9 @@ const AddExam = () => {
             onChange={handleChange}
             required
           />
-          {error && error.includes('Course name') && <p style={{ color: 'red' }}>{error}</p>}
+          {error && error.includes("Course name") && (
+            <p style={{ color: "red" }}>{error}</p>
+          )}
         </div>
         <div>
           <label>Course Code:</label>
@@ -125,7 +130,9 @@ const AddExam = () => {
             onChange={handleChange}
             required
           />
-          {error && error.includes('past date') && <p style={{ color: 'red' }}>{error}</p>}
+          {error && error.includes("past date") && (
+            <p style={{ color: "red" }}>{error}</p>
+          )}
         </div>
         <div>
           <label>Start Time:</label>

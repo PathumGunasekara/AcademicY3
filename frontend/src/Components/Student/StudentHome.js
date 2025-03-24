@@ -1,5 +1,5 @@
 import React from 'react'
-import StudentNav from "../StudentNav/StudentNav";
+import StudentNav from "./StudentNav";
 
 
 function StudentHome() {
