@@ -22,7 +22,7 @@ function Home() {
           <div className="max-w-4xl">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
               Welcome to Our{" "}
-              <span className="text-blue-300">Course Management System</span>
+              <span className="text-blue-300">Acadamic Scheduler System</span>
             </h1>
 
             <p className="text-xl sm:text-2xl mb-10 leading-relaxed">

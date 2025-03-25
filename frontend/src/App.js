@@ -18,10 +18,10 @@ function App() {
     <div>
       <React.Fragment>
         <Routes>
-          <Route path="/Home" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/StudentHome" element={<StudentHome />} />
           <Route path="/login" element={<LoginForm />} />
-          <Route path="/" element={<RegisterForm />} />
+          <Route path="/register" element={<RegisterForm />} />
           <Route path="/exams" element={<Exams />} />
           <Route path="/addexam" element={<AddExam />} />
           <Route path="/examdetails/:id" element={<UpdateExam />} />
