@@ -52,27 +52,68 @@ const UpdateExam = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // Validation for Course Name (no numbers allowed)
     if (name === "courseName" && /\d/.test(value)) {
       setError("Course name should not contain numbers.");
       return;
     }
 
+    // Validation for Date (cannot be a past date)
     if (name === "date") {
       const selectedDate = new Date(value);
       const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0);
+      currentDate.setHours(0, 0, 0, 0); // Reset time to midnight for accurate comparison
+
       if (selectedDate < currentDate) {
         setError("You cannot select a past date.");
         return;
       }
     }
 
+    // Validation for Start Time (if the date is today, start time must be after the current time)
+    if (name === "startTime") {
+      const selectedDate = new Date(formData.date);
+      const currentDate = new Date();
+      const selectedStartTime = new Date(
+        `${selectedDate.toISOString().split("T")[0]}T${value}`
+      );
+
+      if (selectedDate.toISOString().split("T")[0] === currentDate.toISOString().split("T")[0] && selectedStartTime <= currentDate) {
+        setError("Start time must be after the current time.");
+        return;
+      }
+    }
+
+    // Validation: End Time must be after Start Time
+    if (name === "endTime" && formData.startTime) {
+      if (value <= formData.startTime) {
+        setError("End time must be after start time.");
+        return;
+      }
+    }
+
+    // Validation: Start Time must be before End Time
+    if (name === "startTime" && formData.endTime) {
+      if (value >= formData.endTime) {
+        setError("Start time must be before end time.");
+        return;
+      }
+    }
+
+    // Clear any previous errors
     setError("");
-    setFormData({ ...formData, [name]: value });
+
+    // Update the form data
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if there is any error before submitting
     if (error) {
       alert("Please fix the error before submitting.");
       return;
@@ -161,6 +202,9 @@ const UpdateExam = () => {
             onChange={handleChange}
             required
           />
+          {error && error.includes("Start time") && (
+            <p style={{ color: "red" }}>{error}</p>
+          )}
         </div>
         <div>
           <label>Duration (in minutes):</label>
@@ -181,6 +225,9 @@ const UpdateExam = () => {
             onChange={handleChange}
             required
           />
+          {error && error.includes("End time") && (
+            <p style={{ color: "red" }}>{error}</p>
+          )}
         </div>
         <div>
           <label>Location:</label>
