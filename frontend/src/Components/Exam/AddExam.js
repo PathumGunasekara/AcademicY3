@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const AddExam = () => {
   const navigate = useNavigate();
 
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     courseName: "",
     courseCode: "",
@@ -15,8 +16,6 @@ const AddExam = () => {
     endTime: "",
     location: "",
   });
-
-  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +34,36 @@ const AddExam = () => {
 
       if (selectedDate < currentDate) {
         setError("You cannot select a past date.");
+        return;
+      }
+    }
+
+    // Validation for Start Time (if the date is today, start time must be after the current time)
+    if (name === "startTime") {
+      const selectedDate = new Date(formData.date);
+      const currentDate = new Date();
+      const selectedStartTime = new Date(
+        `${selectedDate.toISOString().split("T")[0]}T${value}`
+      );
+
+      if (selectedDate.toISOString().split("T")[0] === currentDate.toISOString().split("T")[0] && selectedStartTime <= currentDate) {
+        setError("Start time must be after the current time.");
+        return;
+      }
+    }
+
+    // Validation: End Time must be after Start Time
+    if (name === "endTime" && formData.startTime) {
+      if (value <= formData.startTime) {
+        setError("End time must be after start time.");
+        return;
+      }
+    }
+
+    // Validation: Start Time must be before End Time
+    if (name === "startTime" && formData.endTime) {
+      if (value >= formData.endTime) {
+        setError("Start time must be before end time.");
         return;
       }
     }
@@ -59,25 +88,15 @@ const AddExam = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/exams", formData);
+      const response = await axios.post(
+        `http://localhost:5000/exams`,
+        formData
+      );
       if (response.status === 200) {
         alert("Exam added successfully!");
         navigate("/exams");
-
-        // Clear the form after successful submission
-        setFormData({
-          courseName: "",
-          courseCode: "",
-          examType: "",
-          date: "",
-          startTime: "",
-          duration: "",
-          endTime: "",
-          location: "",
-        });
       }
-    } catch (error) {
-      console.error("Error adding exam:", error);
+    } catch (err) {
       alert("Failed to add exam. Please try again.");
     }
   };
@@ -101,7 +120,9 @@ const AddExam = () => {
             onChange={handleChange}
             required
           />
-          {error && error.includes("Course name") && <p style={{ color: "red" }}>{error}</p>}
+          {error.includes("Course name") && (
+            <p style={{ color: "red" }}>{error}</p>
+          )}
         </div>
         <div>
           <label>Course Code:</label>
@@ -133,7 +154,9 @@ const AddExam = () => {
             min={getTodayDate()} // Disables past dates in the calendar
             required
           />
-          {error && error.includes("past date") && <p style={{ color: "red" }}>{error}</p>}
+          {error.includes("past date") && (
+            <p style={{ color: "red" }}>{error}</p>
+          )}
         </div>
         <div>
           <label>Start Time:</label>
@@ -144,6 +167,9 @@ const AddExam = () => {
             onChange={handleChange}
             required
           />
+          {error && error.includes("Start time") && (
+            <p style={{ color: "red" }}>{error}</p>
+          )}
         </div>
         <div>
           <label>Duration (in minutes):</label>
@@ -164,6 +190,9 @@ const AddExam = () => {
             onChange={handleChange}
             required
           />
+          {error && error.includes("End time") && (
+            <p style={{ color: "red" }}>{error}</p>
+          )}
         </div>
         <div>
           <label>Location:</label>
