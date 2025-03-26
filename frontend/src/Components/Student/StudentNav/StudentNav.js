@@ -6,23 +6,23 @@ function StudentNav() {
     <div className="flex flex-col">
       <header>
         <div className="flex justify-center p-1 bg-slate-300 mt-5 mx-auto rounded-lg">
-          <ul className="flex gap-12 font-bold">
+          <div className="flex gap-6 font-bold">
             <Link to="/Home">
-              <li className="hover:bg-slate-400 text-xl h-12 flex items-center rounded-lg p-2">
-                Home
-              </li>
+              <button className="bg-slate-400 hover:bg-slate-500 text-white text-xl font-semibold py-2 px-4 rounded-lg">
+                Back to Home
+              </button>
             </Link>
             <Link to="/AddStudent">
-              <li className="hover:bg-slate-400 text-xl h-12 flex items-center rounded-lg p-2">
+              <button className="bg-slate-400 hover:bg-slate-500 text-white text-xl font-semibold py-2 px-4 rounded-lg">
                 Add Student
-              </li>
+              </button>
             </Link>
-            <Link to="/CategoryDetails">
-              <li className="hover:bg-slate-400 text-xl h-12 flex items-center rounded-lg p-2">
+            <Link to="/StudentDetails">
+              <button className="bg-slate-400 hover:bg-slate-500 text-white text-xl font-semibold py-2 px-4 rounded-lg">
                 Students Details
-              </li>
+              </button>
             </Link>
-          </ul>
+          </div>
         </div>
       </header>
     </div>
