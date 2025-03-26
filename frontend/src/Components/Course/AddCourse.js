@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 import {
   FiBook,
   FiUser,
@@ -10,7 +11,7 @@ import {
   FiPlus,
 } from "react-icons/fi";
 
-const AddCourse = ({ refreshCourses }) => {
+const AddCourse = () => {
   const [course, setCourse] = useState({
     courseName: "",
     courseCode: "",
@@ -21,6 +22,7 @@ const AddCourse = ({ refreshCourses }) => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const validateField = (name, value) => {
     let error = "";
@@ -50,7 +52,6 @@ const AddCourse = ({ refreshCourses }) => {
     const { name, value } = e.target;
     setCourse((prev) => ({ ...prev, [name]: value }));
 
-    // Validate on change
     const error = validateField(name, value);
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
@@ -59,7 +60,6 @@ const AddCourse = ({ refreshCourses }) => {
     const newErrors = {};
     let isValid = true;
 
-    // Required fields
     if (!course.courseName.trim()) {
       newErrors.courseName = "Course name is required";
       isValid = false;
@@ -69,7 +69,6 @@ const AddCourse = ({ refreshCourses }) => {
       isValid = false;
     }
 
-    // Field validations
     Object.keys(course).forEach((key) => {
       const error = validateField(key, course[key]);
       if (error) {
@@ -84,46 +83,47 @@ const AddCourse = ({ refreshCourses }) => {
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      Swal.fire(
-        "Error",
-        "Cannot add course without filling the required details correctly",
-        "error"
-      );
+      await Swal.fire({
+        title: "Error",
+        text: "Cannot add course without filling the required details correctly",
+        icon: "error",
+        confirmButtonColor: "#4f46e5",
+      });
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await axios.post("http://localhost:5000/courses", course);
-      setCourse({
-        courseName: "",
-        courseCode: "",
-        instructorName: "",
-        credits: "",
-        department: "",
-        courseDescription: "",
-      });
-      setErrors({});
-      await Swal.fire(
-        "Success!",
-        "Course has been added successfully",
-        "success"
+      const response = await axios.post(
+        "http://localhost:5000/courses",
+        course
       );
-      refreshCourses();
+
+      const result = await Swal.fire({
+        title: "Success!",
+        text: "Course has been added successfully",
+        icon: "success",
+        confirmButtonColor: "#4f46e5",
+      });
+
+      if (result.isConfirmed) {
+        navigate("/courses"); // Redirect after successful addition
+      }
     } catch (error) {
       console.error("Error adding course:", error);
-      Swal.fire(
-        "Error",
-        error.response?.data?.message || "Failed to add course",
-        "error"
-      );
+      await Swal.fire({
+        title: "Error",
+        text: error.response?.data?.message || "Failed to add course",
+        icon: "error",
+        confirmButtonColor: "#4f46e5",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 focus:outline-none">
+    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 focus:outline-none max-w-4xl mx-auto">
       <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
         <FiPlus className="mr-2 text-indigo-600" />
         Add New Course

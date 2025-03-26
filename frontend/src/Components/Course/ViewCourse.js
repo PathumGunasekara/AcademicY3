@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import AddCourse from "./AddCourse";
-import { FiSearch, FiX } from "react-icons/fi";
+import { FiSearch, FiX, FiPlus } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const ViewCourse = () => {
   const [courses, setCourses] = useState([]);
@@ -9,6 +9,7 @@ const ViewCourse = () => {
   const [editingCourse, setEditingCourse] = useState(null);
   const [updatedCourse, setUpdatedCourse] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   // Fetch Courses
   const fetchCourses = async () => {
@@ -80,6 +81,11 @@ const ViewCourse = () => {
     setSearchTerm("");
   };
 
+  // Navigate to Add Course page
+  const navigateToAddCourse = () => {
+    navigate("/addcourse");
+  };
+
   return (
     <div className="p-4">
       <div className="flex flex-col items-center mb-6">
@@ -114,8 +120,16 @@ const ViewCourse = () => {
         </div>
       </div>
 
-      {/* Add New Course */}
-      <AddCourse refreshCourses={fetchCourses} />
+      {/* Add New Course Button above table */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={navigateToAddCourse}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition"
+        >
+          <FiPlus />
+          Add New Course
+        </button>
+      </div>
 
       {/* Course Table */}
       <div className="overflow-x-auto mt-4">
