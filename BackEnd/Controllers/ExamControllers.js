@@ -46,13 +46,13 @@ const addExams = async (req, res, next) => {
 //get by id
 const getById = async (req, res, next) => {
 
-    const id = req.params.id;
+    const id = req.params.id; 
 
     let exam; 
 
     try{
         exam = await Exam.findById(id);
-    }catch(err) {
+    }catch(err) { 
         console.log(err);
     }
     
@@ -61,16 +61,16 @@ const getById = async (req, res, next) => {
         return res.status(404).json({message:"exam not found"});
 
     }
-    return res.status(200).json({ exam });
+    return res.status(200).json({ exam }); 
 };
-
-//update user details
+ 
+//update user details 
 const updateExam = async (req, res, next) => {
 
-    const id = req.params.id;
+    const id = req.params.id; 
     const {courseName, courseCode, examType, date, startTime, duration, endTime, location} = req.body;
 
-    let exams;
+    let exams; 
 
     try{
         exams = await Exam.findByIdAndUpdate (id,
@@ -105,15 +105,15 @@ const deleteExam = async (req, res, next) => {
     }
     if (!exams){
         return res.status(404).json({message:"unable to delete exam details"});
-
-    }
+  
+    } 
     return res.status(200).json({ exams });
 };
 
-
+ 
 
 exports.getAllExams = getAllExams;
 exports.addExams = addExams;
-exports.getById = getById;
+exports.getById = getById; 
 exports.updateExam = updateExam;
-exports.deleteExam = deleteExam;
+exports.deleteExam = deleteExam; 
