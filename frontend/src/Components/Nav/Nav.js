@@ -13,7 +13,7 @@ function Nav() {
           <Link to="/StudentHome" className="nav-link">Students</Link>
         </li>
         <li className="nav-item">
-          <Link to="/instructors" className="nav-link">Instructors</Link>
+          <Link to="/InstructorHome" className="nav-link">Instructors</Link>
         </li>
         <li className="nav-item">
           <Link to="/exams" className="nav-link">Exams</Link>
