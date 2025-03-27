@@ -120,6 +120,7 @@ function AddStudent() {
                 <option value="Computing">Faculty of Computing</option>
                 <option value="Engineering">Faculty of Engineering</option>
                 <option value="Science">Faculty of Science</option>
+                <option value="Business">Faculty of Business</option>
                 </select>
                 <br /><br />
                 <label>Date of Birth</label>
