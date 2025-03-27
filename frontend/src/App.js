@@ -20,6 +20,15 @@ import AddExam from './Components/Exam/AddExam';
 import UpdateExam from './Components/Exam/UpdateExam';
 
 
+
+
+import InstructorHome from './Components/Instructor/InstructorHome';
+import ManageAvailability from './Components/Instructor/ManageAvailability';
+import AddInstructor from './Components/Instructor/AddInstructor';
+import UpdateInstructor from './Components/Instructor/UpdateInstructor';
+
+
+
 function App() {
 
 
@@ -44,6 +53,15 @@ function App() {
             <Route path="/exams" element={<Exams />} />
             <Route path="/addexam" element={<AddExam />} />
             <Route path="/examdetails/:id" element={<UpdateExam />} />
+
+
+
+            <Route path="/InstructorHome" element={<InstructorHome />} /> 
+            <Route path="/manage-availability" element={<ManageAvailability />} /> 
+            <Route path="/addinstructor" element={<AddInstructor />} />
+            <Route path="/updateinstructor/:id" element={<UpdateInstructor />} />
+
+
  Development
         </Routes>
       </React.Fragment>

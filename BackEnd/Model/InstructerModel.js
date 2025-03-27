@@ -1,5 +1,5 @@
-const mongoose = require ("mongoose");
-const Schema= mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const availabilitySchema = new Schema({
     day: {
@@ -17,9 +17,14 @@ const availabilitySchema = new Schema({
 }, { _id: false });
 
 const instructorSchema = new Schema({
-    name: {
+    firstName: {
         type: String,
-        required: [true, 'Name is required'],
+        required: [true, 'First name is required'],
+        trim: true,
+    },
+    lastName: {
+        type: String,
+        required: [true, 'Last name is required'],
         trim: true,
     },
     email: {
@@ -32,9 +37,10 @@ const instructorSchema = new Schema({
         type: String,
         required: [true, 'Phone number is required'],
     },
-    image: {
+    faculty: {
         type: String,
-        required: [true, 'Instructor image is required'],
+        required: [true, 'Faculty is required'],
+        enum: ['Faculty of Computing', 'Faculty of Engineering', 'Faculty of Business'],
     },
     availability: [availabilitySchema],
 }, {
