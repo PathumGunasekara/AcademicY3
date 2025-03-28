@@ -52,56 +52,76 @@ const UpdateExam = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Validation for Course Name (no numbers allowed)
-    if (name === "courseName" && /\d/.test(value)) {
-      setError("Course name should not contain numbers.");
-      return;
+    // Course Name Validation: Only letters and spaces (No Numbers Allowed)
+    if (name === "courseName") {
+      if (!/^[A-Za-z\s]*$/.test(value)) {
+        setError("Course name should contain only letters.");
+        return;
+      } else {
+        setError(""); // Clear error if valid
+      }
     }
 
-    // Validation for Date (cannot be a past date)
+    // Course Code Validation: Two uppercase letters followed by four digits (e.g., CS1234)
+    if (name === "courseCode") {
+      if (!/^[A-Z]{2}\d{4}$/.test(value)) {
+        setError("Course code must start with two uppercase letters followed by four digits.");
+        return;
+      } else {
+        setError(""); // Clear error if valid
+      }
+    }
+
+    // Date Validation: Cannot select a past date
     if (name === "date") {
       const selectedDate = new Date(value);
       const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0); // Reset time to midnight for accurate comparison
+      currentDate.setHours(0, 0, 0, 0);
 
       if (selectedDate < currentDate) {
         setError("You cannot select a past date.");
         return;
+      } else {
+        setError(""); // Clear error if valid
       }
     }
 
-    // Validation for Start Time (if the date is today, start time must be after the current time)
+    // Start Time Validation: Must be after the current time (if today)
     if (name === "startTime") {
       const selectedDate = new Date(formData.date);
       const currentDate = new Date();
-      const selectedStartTime = new Date(
-        `${selectedDate.toISOString().split("T")[0]}T${value}`
-      );
+      const selectedStartTime = new Date(`${selectedDate.toISOString().split("T")[0]}T${value}`);
 
-      if (selectedDate.toISOString().split("T")[0] === currentDate.toISOString().split("T")[0] && selectedStartTime <= currentDate) {
+      if (
+        selectedDate.toISOString().split("T")[0] === currentDate.toISOString().split("T")[0] &&
+        selectedStartTime <= currentDate
+      ) {
         setError("Start time must be after the current time.");
         return;
+      } else {
+        setError(""); // Clear error if valid
       }
     }
 
-    // Validation: End Time must be after Start Time
+    // End Time Validation: Must be after Start Time
     if (name === "endTime" && formData.startTime) {
       if (value <= formData.startTime) {
         setError("End time must be after start time.");
         return;
+      } else {
+        setError(""); // Clear error if valid
       }
     }
 
-    // Validation: Start Time must be before End Time
+    // Start Time Validation: Must be before End Time
     if (name === "startTime" && formData.endTime) {
       if (value >= formData.endTime) {
         setError("Start time must be before end time.");
         return;
+      } else {
+        setError(""); // Clear error if valid
       }
     }
-
-    // Clear any previous errors
-    setError("");
 
     // Update the form data
     setFormData({
@@ -113,17 +133,14 @@ const UpdateExam = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if there is any error before submitting
+    // Prevent submission if an error exists
     if (error) {
       alert("Please fix the error before submitting.");
       return;
     }
 
     try {
-      const response = await axios.put(
-        `http://localhost:5000/exams/${id}`,
-        formData
-      );
+      const response = await axios.put(`http://localhost:5000/exams/${id}`, formData);
       if (response.status === 200) {
         alert("Exam updated successfully!");
         navigate("/exams");
@@ -155,9 +172,7 @@ const UpdateExam = () => {
             onChange={handleChange}
             required
           />
-          {error.includes("Course name") && (
-            <p style={{ color: "red" }}>{error}</p>
-          )}
+          {error.includes("Course name") && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div>
           <label>Course Code:</label>
@@ -168,6 +183,7 @@ const UpdateExam = () => {
             onChange={handleChange}
             required
           />
+          {error.includes("Course code") && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div>
           <label>Exam Type:</label>
@@ -186,12 +202,10 @@ const UpdateExam = () => {
             name="date"
             value={formData.date}
             onChange={handleChange}
-            min={getTodayDate()} // Disables past dates in the calendar
+            min={getTodayDate()}
             required
           />
-          {error.includes("past date") && (
-            <p style={{ color: "red" }}>{error}</p>
-          )}
+          {error.includes("past date") && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div>
           <label>Start Time:</label>
@@ -202,9 +216,7 @@ const UpdateExam = () => {
             onChange={handleChange}
             required
           />
-          {error && error.includes("Start time") && (
-            <p style={{ color: "red" }}>{error}</p>
-          )}
+          {error.includes("Start time") && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div>
           <label>Duration (in minutes):</label>
@@ -225,9 +237,7 @@ const UpdateExam = () => {
             onChange={handleChange}
             required
           />
-          {error && error.includes("End time") && (
-            <p style={{ color: "red" }}>{error}</p>
-          )}
+          {error.includes("End time") && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div>
           <label>Location:</label>
