@@ -22,8 +22,16 @@ const AddExam = () => {
 
     // Validation for Course Name (only letters allowed)
     if (name === "courseName") {
-      if (!/^[A-Za-z\s]+$/.test(value)) {
+      if (value && !/^[A-Za-z\s]+$/.test(value)) {
         setError("Course name should only contain letters and spaces.");
+        return;
+      }
+    }
+
+    // Validation for Course Code (only letters and numbers allowed)
+    if (name === "courseCode") {
+      if (value && !/^[A-Za-z0-9]+$/.test(value)) {
+        setError("Course code should only contain letters and numbers.");
         return;
       }
     }
@@ -45,7 +53,7 @@ const AddExam = () => {
       const selectedDate = new Date(formData.date);
       const currentDate = new Date();
       const selectedStartTime = new Date(
-        `${selectedDate.toISOString().split("T")[0]}T${value}`
+        selectedDate.toISOString().split("T")[0] + "T" + value
       );
 
       if (
@@ -59,8 +67,13 @@ const AddExam = () => {
 
     // Validation: End Time must be after Start Time
     if (name === "endTime" && formData.startTime) {
-      if (value <= formData.startTime) {
-        setError("End time must be after start time.");
+      const startTimeInMinutes = new Date(`${formData.date}T${formData.startTime}`).getTime();
+      const endTimeInMinutes = new Date(`${formData.date}T${value}`).getTime();
+
+      const durationInMinutes = parseInt(formData.duration) * 60000; // Convert duration to milliseconds
+
+      if (endTimeInMinutes - startTimeInMinutes < durationInMinutes) {
+        setError("End time must be at least the duration after the start time.");
         return;
       }
     }
@@ -177,6 +190,9 @@ const AddExam = () => {
               fontSize: "16px"
             }}
           />
+          {error.includes("Course code") && (
+            <p style={{ color: "red", margin: "5px 0 0", fontSize: "14px" }}>{error}</p>
+          )}
         </div>
         <div style={{
           display: "flex",
@@ -346,3 +362,5 @@ const AddExam = () => {
 };
 
 export default AddExam;
+
+
