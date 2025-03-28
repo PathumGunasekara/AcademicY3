@@ -52,23 +52,20 @@ const UpdateExam = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // Remove the error when user starts typing again
+    setError("");
+
     // Course Name Validation: Only letters and spaces (No Numbers Allowed)
     if (name === "courseName") {
-      if (!/^[A-Za-z\s]*$/.test(value)) {
+      if (!/^[A-Za-z\s]*$/.test(value) && value !== "") {
         setError("Course name should contain only letters.");
-        return;
-      } else {
-        setError(""); // Clear error if valid
       }
     }
 
-    // Course Code Validation: Two uppercase letters followed by four digits (e.g., CS1234)
+    // Validation for Course Code (only letters and numbers allowed)
     if (name === "courseCode") {
-      if (!/^[A-Z]{2}\d{4}$/.test(value)) {
-        setError("Course code must start with two uppercase letters followed by four digits.");
-        return;
-      } else {
-        setError(""); // Clear error if valid
+      if (!/^[A-Za-z0-9]*$/.test(value)) {  // Adjusted to allow empty string
+        setError("Course code should only contain letters and numbers.");
       }
     }
 
@@ -80,9 +77,6 @@ const UpdateExam = () => {
 
       if (selectedDate < currentDate) {
         setError("You cannot select a past date.");
-        return;
-      } else {
-        setError(""); // Clear error if valid
       }
     }
 
@@ -97,19 +91,17 @@ const UpdateExam = () => {
         selectedStartTime <= currentDate
       ) {
         setError("Start time must be after the current time.");
-        return;
-      } else {
-        setError(""); // Clear error if valid
       }
     }
 
     // End Time Validation: Must be after Start Time
     if (name === "endTime" && formData.startTime) {
-      if (value <= formData.startTime) {
-        setError("End time must be after start time.");
-        return;
-      } else {
-        setError(""); // Clear error if valid
+      const startTime = new Date(`${formData.date}T${formData.startTime}`);
+      const endTime = new Date(`${formData.date}T${value}`);
+      const durationInMillis = formData.duration * 60 * 1000;
+
+      if (endTime - startTime < durationInMillis) {
+        setError("End time must be at least the duration after start time.");
       }
     }
 
@@ -117,9 +109,6 @@ const UpdateExam = () => {
     if (name === "startTime" && formData.endTime) {
       if (value >= formData.endTime) {
         setError("Start time must be before end time.");
-        return;
-      } else {
-        setError(""); // Clear error if valid
       }
     }
 
@@ -389,9 +378,6 @@ const UpdateExam = () => {
           fontSize: "16px",
           marginTop: "10px",
           transition: "background-color 0.3s",
-          ":hover": {
-            backgroundColor: "#45a049"
-          }
         }}>Update Exam</button>
       </form>
     </div>

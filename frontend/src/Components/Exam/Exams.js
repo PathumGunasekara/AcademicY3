@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const Exams = () => {
   const [exams, setExams] = useState([]);
@@ -40,23 +42,45 @@ const Exams = () => {
   };
 
   const generateReport = () => {
-    // Create CSV content
-    let csvContent = "Course Name,Course Code,Exam Type,Date,Start Time,Duration (minutes),End Time,Location\n";
-    
-    exams.forEach((exam) => {
-      csvContent += `"${exam.courseName}","${exam.courseCode}","${exam.examType}","${new Date(exam.date).toLocaleDateString()}","${exam.startTime}","${exam.duration}","${exam.endTime}","${exam.location}"\n`;
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(16);
+    doc.text("Exams Report", 14, 15);
+
+    // Define table columns
+    const columns = [
+      "Course Name",
+      "Course Code",
+      "Exam Type",
+      "Date",
+      "Start Time",
+      "Duration (minutes)",
+      "End Time",
+      "Location",
+    ];
+
+    // Map exam data to table rows
+    const rows = exams.map((exam) => [
+      exam.courseName,
+      exam.courseCode,
+      exam.examType,
+      new Date(exam.date).toLocaleDateString(),
+      exam.startTime,
+      exam.duration,
+      exam.endTime,
+      exam.location,
+    ]);
+
+    // Generate table
+    autoTable(doc, {
+      startY: 20, // Positioning below the title
+      head: [columns],
+      body: rows,
     });
 
-    // Create download link
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'exams_report.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Save the PDF
+    doc.save("exams_report.pdf");
   };
 
   if (loading) {
@@ -205,4 +229,4 @@ const Exams = () => {
   );
 };
 
-export default Exams; 
+export default Exams;
