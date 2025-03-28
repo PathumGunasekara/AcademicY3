@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FiSearch, FiX, FiPlus } from "react-icons/fi";
+import { FiSearch, FiX, FiPlus, FiDownload } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Nav from "../Nav/Nav";
 import Swal from "sweetalert2";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const ViewCourse = () => {
   const [courses, setCourses] = useState([]);
@@ -42,6 +44,86 @@ const ViewCourse = () => {
       setFilteredCourses(filtered);
     }
   }, [searchTerm, courses]);
+
+  // Clear search
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
+  // Navigate to Add Course page
+  const navigateToAddCourse = () => {
+    navigate("/addcourse");
+  };
+
+  // Generate PDF
+  const generatePDF = () => {
+    // Initialize jsPDF
+    const doc = new jsPDF();
+
+    // Register the autoTable plugin
+    autoTable(doc, {
+      startY: 40,
+      head: [
+        [
+          "Course Name",
+          "Code",
+          "Instructor",
+          "Credits",
+          "Department",
+          "Description",
+        ],
+      ],
+      body: filteredCourses.map((course) => [
+        course.courseName,
+        course.courseCode,
+        course.instructorName,
+        course.credits,
+        course.department,
+        course.courseDescription,
+      ]),
+      theme: "grid",
+      headStyles: {
+        fillColor: [79, 70, 229], // indigo-600
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      alternateRowStyles: {
+        fillColor: [249, 250, 251], // gray-50
+      },
+      styles: {
+        cellPadding: 3,
+        fontSize: 10,
+        valign: "middle",
+      },
+      columnStyles: {
+        0: { cellWidth: "auto" },
+        1: { cellWidth: "auto" },
+        2: { cellWidth: "auto" },
+        3: { cellWidth: "auto" },
+        4: { cellWidth: "auto" },
+        5: { cellWidth: "wrap" },
+      },
+      margin: { top: 40 },
+    });
+
+    // Add title
+    doc.setFontSize(20);
+    doc.setTextColor(40);
+    doc.text("Course Details Report", 15, 20);
+
+    // Add date
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 15, 30);
+
+    // Save the PDF
+    doc.save(`course-report-${new Date().toISOString().slice(0, 10)}.pdf`);
+
+    Swal.fire(
+      "Success!",
+      "PDF report has been generated and downloaded.",
+      "success"
+    );
+  };
 
   // Enable Editing
   const handleEdit = (course) => {
@@ -114,16 +196,6 @@ const ViewCourse = () => {
     }
   };
 
-  // Clear search
-  const clearSearch = () => {
-    setSearchTerm("");
-  };
-
-  // Navigate to Add Course page
-  const navigateToAddCourse = () => {
-    navigate("/addcourse");
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Nav />
@@ -160,8 +232,15 @@ const ViewCourse = () => {
           </div>
         </div>
 
-        {/* Add New Course Button above table */}
-        <div className="flex justify-end mb-4">
+        {/* Action Buttons */}
+        <div className="flex justify-between mb-4">
+          <button
+            onClick={generatePDF}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition"
+          >
+            <FiDownload />
+            Generate PDF
+          </button>
           <button
             onClick={navigateToAddCourse}
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition"
