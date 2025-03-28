@@ -93,7 +93,7 @@ const AddExam = () => {
     }
 
     try {
-      const response = await axios.post(`http://localhost:5000/exams`, formData);
+      const response = await axios.post("http://localhost:5000/exams", formData);
       if (response.status === 200) {
         alert("Exam added successfully!");
         navigate("/exams");
@@ -110,103 +110,236 @@ const AddExam = () => {
   };
 
   return (
-    <div>
-      <h1>Add Exam</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Course Name:</label>
+    <div style={{
+      maxWidth: "600px",
+      margin: "0 auto",
+      padding: "20px",
+      fontFamily: "Arial, sans-serif",
+      backgroundColor: "#f5f5f5",
+      borderRadius: "8px",
+      boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+    }}>
+      <h1 style={{
+        textAlign: "center",
+        color: "#333",
+        marginBottom: "20px"
+      }}>Add Exam</h1>
+      <form onSubmit={handleSubmit} style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "15px"
+      }}>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <label style={{
+            fontWeight: "bold",
+            color: "#555"
+          }}>Course Name:</label>
           <input
             type="text"
             name="courseName"
             value={formData.courseName}
             onChange={handleChange}
             required
+            style={{
+              padding: "8px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px"
+            }}
           />
           {error.includes("Course name") && (
-            <p style={{ color: "red" }}>{error}</p>
+            <p style={{ color: "red", margin: "5px 0 0", fontSize: "14px" }}>{error}</p>
           )}
         </div>
-        <div>
-          <label>Course Code:</label>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <label style={{
+            fontWeight: "bold",
+            color: "#555"
+          }}>Course Code:</label>
           <input
             type="text"
             name="courseCode"
             value={formData.courseCode}
             onChange={handleChange}
             required
+            style={{
+              padding: "8px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px"
+            }}
           />
         </div>
-        <div>
-          <label>Exam Type:</label>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <label style={{
+            fontWeight: "bold",
+            color: "#555"
+          }}>Exam Type:</label>
           <input
             type="text"
             name="examType"
             value={formData.examType}
             onChange={handleChange}
             required
+            style={{
+              padding: "8px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px"
+            }}
           />
         </div>
-        <div>
-          <label>Date:</label>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <label style={{
+            fontWeight: "bold",
+            color: "#555"
+          }}>Date:</label>
           <input
             type="date"
             name="date"
             value={formData.date}
             onChange={handleChange}
-            min={getTodayDate()} // Disables past dates in the calendar
+            min={getTodayDate()}
             required
+            style={{
+              padding: "8px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px"
+            }}
           />
           {error.includes("past date") && (
-            <p style={{ color: "red" }}>{error}</p>
+            <p style={{ color: "red", margin: "5px 0 0", fontSize: "14px" }}>{error}</p>
           )}
         </div>
-        <div>
-          <label>Start Time:</label>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <label style={{
+            fontWeight: "bold",
+            color: "#555"
+          }}>Start Time:</label>
           <input
             type="time"
             name="startTime"
             value={formData.startTime}
             onChange={handleChange}
             required
+            style={{
+              padding: "8px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px"
+            }}
           />
           {error && error.includes("Start time") && (
-            <p style={{ color: "red" }}>{error}</p>
+            <p style={{ color: "red", margin: "5px 0 0", fontSize: "14px" }}>{error}</p>
           )}
         </div>
-        <div>
-          <label>Duration (in minutes):</label>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <label style={{
+            fontWeight: "bold",
+            color: "#555"
+          }}>Duration (in minutes):</label>
           <input
             type="number"
             name="duration"
             value={formData.duration}
             onChange={handleChange}
             required
+            style={{
+              padding: "8px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px"
+            }}
           />
         </div>
-        <div>
-          <label>End Time:</label>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <label style={{
+            fontWeight: "bold",
+            color: "#555"
+          }}>End Time:</label>
           <input
             type="time"
             name="endTime"
             value={formData.endTime}
             onChange={handleChange}
             required
+            style={{
+              padding: "8px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px"
+            }}
           />
           {error && error.includes("End time") && (
-            <p style={{ color: "red" }}>{error}</p>
+            <p style={{ color: "red", margin: "5px 0 0", fontSize: "14px" }}>{error}</p>
           )}
         </div>
-        <div>
-          <label>Location:</label>
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <label style={{
+            fontWeight: "bold",
+            color: "#555"
+          }}>Location:</label>
           <input
             type="text"
             name="location"
             value={formData.location}
             onChange={handleChange}
             required
+            style={{
+              padding: "8px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "16px"
+            }}
           />
         </div>
-        <button type="submit">Add Exam</button>
+        <button type="submit" style={{
+          padding: "10px 15px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          fontSize: "16px",
+          marginTop: "10px",
+          transition: "background-color 0.3s",
+          ":hover": {
+            backgroundColor: "#45a049"
+          }
+        }}>Add Exam</button>
       </form>
     </div>
   );
