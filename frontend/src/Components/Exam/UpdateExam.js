@@ -51,32 +51,39 @@ const UpdateExam = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let processedValue = value;
 
     // Remove the error when user starts typing again
     setError("");
 
-    // Course Name Validation: Only letters and spaces (No Numbers Allowed)
-    if (name === "courseName") {
-      if (!/^[A-Za-z\s]*$/.test(value) && value !== "") {
-        setError("Course name should contain only letters.");
+    // Process course code input to enforce uppercase and limit length
+    if (name === "courseCode") {
+      processedValue = value.toUpperCase().slice(0, 6); // Convert to uppercase and limit to 6 chars
+      
+      // Validation for Course Code (must begin with 2 uppercase letters followed by 4 numbers)
+      if (processedValue && !/^[A-Z]{0,2}[0-9]{0,4}$/.test(processedValue)) {
+        setError("Only letters and numbers allowed (format: LLNNNN)");
+        return;
       }
     }
 
-    // Validation for Course Code (only letters and numbers allowed)
-    if (name === "courseCode") {
-      if (!/^[A-Za-z0-9]*$/.test(value)) {  // Adjusted to allow empty string
-        setError("Course code should only contain letters and numbers.");
+    // Validation for Course Name (only letters allowed)
+    if (name === "courseName") {
+      if (processedValue && !/^[A-Za-z\s]+$/.test(processedValue)) {
+        setError("Course name should only contain letters and spaces.");
+        return;
       }
     }
 
     // Date Validation: Cannot select a past date
     if (name === "date") {
-      const selectedDate = new Date(value);
+      const selectedDate = new Date(processedValue);
       const currentDate = new Date();
       currentDate.setHours(0, 0, 0, 0);
 
       if (selectedDate < currentDate) {
         setError("You cannot select a past date.");
+        return;
       }
     }
 
@@ -84,43 +91,61 @@ const UpdateExam = () => {
     if (name === "startTime") {
       const selectedDate = new Date(formData.date);
       const currentDate = new Date();
-      const selectedStartTime = new Date(`${selectedDate.toISOString().split("T")[0]}T${value}`);
+      const selectedStartTime = new Date(
+        `${selectedDate.toISOString().split("T")[0]}T${processedValue}`
+      );
 
       if (
         selectedDate.toISOString().split("T")[0] === currentDate.toISOString().split("T")[0] &&
         selectedStartTime <= currentDate
       ) {
         setError("Start time must be after the current time.");
+        return;
       }
     }
 
     // End Time Validation: Must be after Start Time
     if (name === "endTime" && formData.startTime) {
-      const startTime = new Date(`${formData.date}T${formData.startTime}`);
-      const endTime = new Date(`${formData.date}T${value}`);
-      const durationInMillis = formData.duration * 60 * 1000;
+      const startTimeInMinutes = new Date(`${formData.date}T${formData.startTime}`).getTime();
+      const endTimeInMinutes = new Date(`${formData.date}T${processedValue}`).getTime();
+      const durationInMinutes = parseInt(formData.duration) * 60000;
 
-      if (endTime - startTime < durationInMillis) {
-        setError("End time must be at least the duration after start time.");
+      if (endTimeInMinutes - startTimeInMinutes < durationInMinutes) {
+        setError("End time must be at least the duration after the start time.");
+        return;
       }
     }
 
-    // Start Time Validation: Must be before End Time
+    // Validation: Start Time must be before End Time
     if (name === "startTime" && formData.endTime) {
-      if (value >= formData.endTime) {
+      if (processedValue >= formData.endTime) {
         setError("Start time must be before end time.");
+        return;
       }
     }
 
     // Update the form data
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: processedValue,
     });
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    if (name === "courseCode" && value && !/^[A-Z]{2}[0-9]{4}$/.test(value)) {
+      setError("Course code must be 2 uppercase letters followed by 4 numbers (e.g., IT2020)");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Final validation check before submitting
+    if (!/^[A-Z]{2}[0-9]{4}$/.test(formData.courseCode)) {
+      setError("Course code must be 2 uppercase letters followed by 4 numbers (e.g., IT2020)");
+      return;
+    }
 
     // Prevent submission if an error exists
     if (error) {
@@ -208,13 +233,18 @@ const UpdateExam = () => {
             name="courseCode"
             value={formData.courseCode}
             onChange={handleChange}
+            onBlur={handleBlur}
             required
             style={{
               padding: "8px",
               border: "1px solid #ddd",
               borderRadius: "4px",
-              fontSize: "16px"
+              fontSize: "16px",
+              textTransform: "uppercase"
             }}
+            maxLength={6}
+            pattern="[A-Z]{2}[0-9]{4}"
+            title="2 uppercase letters followed by 4 numbers (e.g., IT2020)"
           />
           {error.includes("Course code") && (
             <p style={{ color: "red", margin: "5px 0 0", fontSize: "14px" }}>{error}</p>
