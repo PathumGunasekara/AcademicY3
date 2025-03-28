@@ -1,7 +1,6 @@
-
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Exams = () => {
   const [exams, setExams] = useState([]);
@@ -11,11 +10,11 @@ const Exams = () => {
   useEffect(() => {
     const fetchExams = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/exams');
+        const response = await axios.get("http://localhost:5000/exams");
         if (response.status === 200) {
           setExams(response.data.Exams);
         } else {
-          setError('Failed to fetch exams');
+          setError("Failed to fetch exams");
         }
       } catch (err) {
         setError(err.message);
@@ -31,79 +30,179 @@ const Exams = () => {
     try {
       const response = await axios.delete(`http://localhost:5000/exams/${id}`);
       if (response.status === 200) {
-        // Remove the deleted exam from the state
-        setExams(exams.filter(exam => exam._id !== id));
+        setExams(exams.filter((exam) => exam._id !== id));
       } else {
-        setError('Failed to delete exam');
+        setError("Failed to delete exam");
       }
     } catch (err) {
       setError(err.message);
     }
   };
 
+  const generateReport = () => {
+    // Create CSV content
+    let csvContent = "Course Name,Course Code,Exam Type,Date,Start Time,Duration (minutes),End Time,Location\n";
+    
+    exams.forEach((exam) => {
+      csvContent += `"${exam.courseName}","${exam.courseCode}","${exam.examType}","${new Date(exam.date).toLocaleDateString()}","${exam.startTime}","${exam.duration}","${exam.endTime}","${exam.location}"\n`;
+    });
+
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'exams_report.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <div style={{ textAlign: "center", padding: "20px" }}>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div style={{ textAlign: "center", color: "red", padding: "20px" }}>Error: {error}</div>;
   }
 
   return (
-    <div>
-      <h1>Exams List</h1>
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h1 style={{ textAlign: "center" }}>Exams List</h1>
 
-      {/*Add Exam button */}
-      <Link to="/addexam">
-        <button>Add Exam</button>
-      </Link>
-
+      <div style={{ marginBottom: "10px", display: "flex", justifyContent: "space-between" }}>
+        <button
+          onClick={generateReport}
+          style={{
+            padding: "10px 15px",
+            backgroundColor: "#6c757d",
+            color: "white",
+            border: "none",
+            cursor: "pointer",
+            borderRadius: "5px",
+          }}
+        >
+          Generate Report
+        </button>
+        <Link to="/addexam">
+          <button
+            style={{
+              padding: "10px 15px",
+              backgroundColor: "#28a745",
+              color: "white",
+              border: "none",
+              cursor: "pointer",
+              borderRadius: "5px",
+            }}
+          >
+            Add Exam
+          </button>
+        </Link>
+      </div>
 
       {exams.length > 0 ? (
-        <table>
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            textAlign: "left",
+            marginTop: "10px",
+          }}
+        >
           <thead>
             <tr>
-              <th>Course Name</th>
-              <th>Course Code</th>
-              <th>Exam Type</th>
-              <th>Date</th>
-              <th>Start Time</th>
-              <th>Duration (minutes)</th>
-              <th>End Time</th>
-              <th>Location</th>
-              <th>Action</th>
+              {[
+                "Course Name",
+                "Course Code",
+                "Exam Type",
+                "Date",
+                "Start Time",
+                "Duration (minutes)",
+                "End Time",
+                "Location",
+                "Action",
+              ].map((header) => (
+                <th
+                  key={header}
+                  style={{
+                    border: "1px solid black",
+                    padding: "8px",
+                    backgroundColor: "#f2f2f2",
+                    textAlign: "center",
+                  }}
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {exams.map((exam) => (
               <tr key={exam._id}>
-                <td>{exam.courseName}</td>
-                <td>{exam.courseCode}</td>
-                <td>{exam.examType}</td>
-                <td>{new Date(exam.date).toLocaleDateString()}</td>
-                <td>{exam.startTime}</td>
-                <td>{exam.duration}</td>
-                <td>{exam.endTime}</td>
-                <td>{exam.location}</td>
-                <td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                  {exam.courseName}
+                </td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                  {exam.courseCode}
+                </td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                  {exam.examType}
+                </td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                  {new Date(exam.date).toLocaleDateString()}
+                </td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                  {exam.startTime}
+                </td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                  {exam.duration}
+                </td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                  {exam.endTime}
+                </td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                  {exam.location}
+                </td>
+                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
                   <Link to={`/examdetails/${exam._id}`}>
-                    <button>Edit</button>
+                    <button
+                      style={{
+                        marginRight: "5px",
+                        padding: "5px 10px",
+                        cursor: "pointer",
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "3px",
+                      }}
+                    >
+                      Edit
+                    </button>
                   </Link>
-                  <div>
-                    <button onClick={() => handleDelete(exam._id)}>Delete</button>  
-                  </div>
+                  <button
+                    onClick={() => handleDelete(exam._id)}
+                    style={{
+                      padding: "5px 10px",
+                      cursor: "pointer",
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "3px",
+                    }}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>No exams found.</p>
+        <p style={{ textAlign: "center", marginTop: "20px" }}>No exams found.</p>
       )}
     </div>
   );
 };
 
-export default Exams; 
-
-
+export default Exams;
