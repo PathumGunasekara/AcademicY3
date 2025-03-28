@@ -20,10 +20,12 @@ const AddExam = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Validation for Course Name (no numbers allowed)
-    if (name === "courseName" && /\d/.test(value)) {
-      setError("Course name should not contain numbers.");
-      return;
+    // Validation for Course Name (only letters allowed)
+    if (name === "courseName") {
+      if (!/^[A-Za-z\s]+$/.test(value)) {
+        setError("Course name should only contain letters and spaces.");
+        return;
+      }
     }
 
     // Validation for Date (cannot be a past date)
@@ -46,7 +48,10 @@ const AddExam = () => {
         `${selectedDate.toISOString().split("T")[0]}T${value}`
       );
 
-      if (selectedDate.toISOString().split("T")[0] === currentDate.toISOString().split("T")[0] && selectedStartTime <= currentDate) {
+      if (
+        selectedDate.toISOString().split("T")[0] === currentDate.toISOString().split("T")[0] &&
+        selectedStartTime <= currentDate
+      ) {
         setError("Start time must be after the current time.");
         return;
       }
@@ -88,10 +93,7 @@ const AddExam = () => {
     }
 
     try {
-      const response = await axios.post(
-        `http://localhost:5000/exams`,
-        formData
-      );
+      const response = await axios.post(`http://localhost:5000/exams`, formData);
       if (response.status === 200) {
         alert("Exam added successfully!");
         navigate("/exams");
