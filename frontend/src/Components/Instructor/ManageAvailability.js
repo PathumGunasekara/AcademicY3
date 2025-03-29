@@ -63,11 +63,22 @@ function ManageAvailability() {
   };
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-3">Manage Instructor Availability</h2>
+    <div style={{ maxWidth: "900px", margin: "0 auto", padding: "20px", backgroundColor: "#F1F1F1" }}>
+      <h2 style={{ textAlign: "center", marginBottom: "30px", color: "#003366" }}>Manage Instructor Availability</h2>
       
       {/* Instructor Selection */}
-      <select onChange={(e) => handleInstructorSelect(e.target.value)} className="form-select mb-3">
+      <select
+        onChange={(e) => handleInstructorSelect(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "10px",
+          fontSize: "16px",
+          borderRadius: "5px",
+          border: "1px solid #003366",
+          marginBottom: "30px",
+          backgroundColor: "#E6F2FF",
+        }}
+      >
         <option value="">Select Instructor</option>
         {instructors.map((instructor) => (
           <option key={instructor._id} value={instructor._id}>
@@ -78,37 +89,111 @@ function ManageAvailability() {
 
       {/* Availability Form */}
       {selectedInstructor && (
-        <div className="card p-3">
-          <h4>Manage Availability for {selectedInstructor.firstName} {selectedInstructor.lastName}</h4>
+        <div style={{ backgroundColor: "#FFFFFF", padding: "20px", borderRadius: "8px", boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)" }}>
+          <h4 style={{ color: "#003366", marginBottom: "20px" }}>
+            Manage Availability for {selectedInstructor.firstName} {selectedInstructor.lastName}
+          </h4>
           
-          <div className="d-flex gap-2 my-3">
-            <input type="text" placeholder="Day (e.g., Monday)" 
+          <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+            <input
+              type="text"
+              placeholder="Day (e.g., Monday)"
               className="form-control"
               value={newSlot.day}
-              onChange={(e) => setNewSlot({ ...newSlot, day: e.target.value })} 
+              onChange={(e) => setNewSlot({ ...newSlot, day: e.target.value })}
+              style={{
+                padding: "10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #003366",
+                flex: "1",
+                backgroundColor: "#E6F2FF",
+              }}
             />
-            <input type="time" className="form-control" 
+            <input
+              type="time"
+              className="form-control"
               value={newSlot.startTime}
-              onChange={(e) => setNewSlot({ ...newSlot, startTime: e.target.value })} 
+              onChange={(e) => setNewSlot({ ...newSlot, startTime: e.target.value })}
+              style={{
+                padding: "10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #003366",
+                flex: "1",
+                backgroundColor: "#E6F2FF",
+              }}
             />
-            <input type="time" className="form-control" 
+            <input
+              type="time"
+              className="form-control"
               value={newSlot.endTime}
-              onChange={(e) => setNewSlot({ ...newSlot, endTime: e.target.value })} 
+              onChange={(e) => setNewSlot({ ...newSlot, endTime: e.target.value })}
+              style={{
+                padding: "10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #003366",
+                flex: "1",
+                backgroundColor: "#E6F2FF",
+              }}
             />
-            <button className="btn btn-primary" onClick={handleAddSlot}>Add</button>
+            <button
+              onClick={handleAddSlot}
+              style={{
+                padding: "12px 20px",
+                backgroundColor: "#003366",
+                color: "white",
+                fontSize: "16px",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Add
+            </button>
           </div>
 
           {/* Availability List */}
-          <ul className="list-group mb-3">
+          <ul className="list-group mb-3" style={{ padding: "0" }}>
             {availability.map((slot, index) => (
-              <li key={index} className="list-group-item d-flex justify-content-between">
-                {slot.day}: {slot.startTime} - {slot.endTime}
-                <button className="btn btn-danger btn-sm" onClick={() => handleRemoveSlot(index)}>Remove</button>
+              <li key={index} className="list-group-item d-flex justify-content-between" style={{ backgroundColor: "#F9F9F9", padding: "12px", borderRadius: "5px", marginBottom: "10px" }}>
+                <span style={{ color: "#003366", fontWeight: "500" }}>
+                  {slot.day}: {slot.startTime} - {slot.endTime}
+                </span>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleRemoveSlot(index)}
+                  style={{
+                    backgroundColor: "#D9534F",
+                    borderColor: "#D43F3A",
+                    color: "white",
+                    fontSize: "14px",
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Remove
+                </button>
               </li>
             ))}
           </ul>
 
-          <button className="btn btn-success" onClick={handleUpdateAvailability}>Update Availability</button>
+          <button
+            onClick={handleUpdateAvailability}
+            style={{
+              padding: "12px 20px",
+              backgroundColor: "#28A745",
+              color: "white",
+              fontSize: "16px",
+              borderRadius: "5px",
+              cursor: "pointer",
+              display: "block",
+              margin: "0 auto",
+            }}
+          >
+            Update Availability
+          </button>
         </div>
       )}
     </div>

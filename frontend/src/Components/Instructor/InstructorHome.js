@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { confirmAlert } from "react-confirm-alert"; // Popup for delete confirmation
 import "react-confirm-alert/src/react-confirm-alert.css"; // Importing styles for confirmAlert
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 function InstructorHome() {
   const [instructors, setInstructors] = useState([]);
@@ -72,36 +74,161 @@ function InstructorHome() {
     });
   };
 
+  // Generate PDF report without ID
+  const generateReport = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Instructor Details Report", 14, 22);
+
+    doc.setFontSize(16);
+    doc.text("University Of Hilltop", 14, 28);
+
+    doc.setFontSize(12);
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    doc.text(`Date: ${currentDate}`, 14, 36);
+    doc.text(`Time: ${currentTime}`, 14, 42);
+
+    doc.line(14, 46, 200, 46);
+
+    if (instructors.length > 0) {
+      autoTable(doc, {
+        startY: 51,
+        head: [["Name", "Email", "Phone", "Faculty", "Availability"]], // Removed ID from headers
+        body: instructors.map((instructor) => [
+          `${instructor.firstName} ${instructor.lastName}`, // Name
+          instructor.email, // Email
+          instructor.phone, // Phone
+          instructor.faculty, // Faculty
+          getAvailabilityStatus(instructor.availability), // Availability Status
+        ]),
+        headStyles: { fillColor: [41, 87, 141], textColor: [255, 255, 255] },
+        bodyStyles: { fontSize: 10 },
+        alternateRowStyles: { fillColor: [240, 240, 240] },
+        margin: { left: 14, right: 14 },
+        theme: "grid",
+      });
+    } else {
+      doc.text("No instructor details available.", 14, 56);
+    }
+
+    doc.text("Signature: _____________________", 14, doc.lastAutoTable?.finalY + 20 || 76);
+    doc.save(`Instructor_Details_Report_${currentDate}.pdf`);
+  };
+
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Instructor Management</h2>
-      <div className="mb-3">
-        <Link to="/addinstructor" className="btn btn-primary">Add New Instructor</Link>
-        <Link to="/manage-availability" className="btn btn-secondary ml-3">Manage Instructor Availability</Link>
+    <div style={{ fontFamily: "Arial, sans-serif", marginTop: "30px", backgroundColor: "#f4f7fb", padding: "30px", borderRadius: "8px" }}>
+      <h2 style={{ color: "#004080", marginBottom: "25px", fontSize: "28px", textAlign: "center" }}>Instructor Management</h2>
+      <div style={{ marginBottom: "25px", textAlign: "center" }}>
+        <Link
+          to="/addinstructor"
+          style={{
+            padding: "12px 25px",
+            backgroundColor: "#0052cc",
+            color: "white",
+            borderRadius: "8px",
+            fontSize: "16px",
+            textDecoration: "none",
+            marginRight: "15px",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#0044cc")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#0052cc")}
+        >
+          Add New Instructor
+        </Link>
+        <Link
+          to="/manage-availability"
+          style={{
+            padding: "12px 25px",
+            backgroundColor: "#0066cc",
+            color: "white",
+            borderRadius: "8px",
+            fontSize: "16px",
+            textDecoration: "none",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#0057b8")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#0066cc")}
+        >
+          Manage Availability
+        </Link>
+        <button
+          onClick={generateReport}
+          style={{
+            padding: "12px 25px",
+            backgroundColor: "#17a2b8",
+            color: "white",
+            borderRadius: "8px",
+            fontSize: "16px",
+            marginTop: "10px",
+            border: "none",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+            marginLeft: "15px",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#138496")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#17a2b8")}
+        >
+          Download Report
+        </button>
       </div>
 
-      <table className="table table-striped">
-        <thead className="thead-dark">
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Faculty</th>
-            <th>Availability Status</th>
-            <th>Actions</th>
+      <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "#ffffff", borderRadius: "8px", overflow: "hidden" }}>
+        <thead>
+          <tr style={{ backgroundColor: "#004080", color: "white" }}>
+            <th style={{ padding: "15px", textAlign: "left", fontSize: "16px" }}>Name</th>
+            <th style={{ padding: "15px", textAlign: "left", fontSize: "16px" }}>Email</th>
+            <th style={{ padding: "15px", textAlign: "left", fontSize: "16px" }}>Phone</th>
+            <th style={{ padding: "15px", textAlign: "left", fontSize: "16px" }}>Faculty</th>
+            <th style={{ padding: "15px", textAlign: "left", fontSize: "16px" }}>Availability Status</th>
+            <th style={{ padding: "15px", textAlign: "left", fontSize: "16px" }}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {instructors.map((instructor) => (
-            <tr key={instructor._id}>
-              <td>{instructor.firstName} {instructor.lastName}</td>
-              <td>{instructor.email}</td>
-              <td>{instructor.phone}</td>
-              <td>{instructor.faculty}</td>
-              <td>{getAvailabilityStatus(instructor.availability)}</td>
-              <td>
-                <Link to={`/updateinstructor/${instructor._id}`} className="btn btn-warning btn-sm mr-2">Update</Link>
-                <button onClick={() => deleteInstructor(instructor._id)} className="btn btn-danger btn-sm">Delete</button>
+            <tr key={instructor._id} style={{ borderBottom: "1px solid #eee", backgroundColor: "#fafafa" }}>
+              <td style={{ padding: "15px", fontSize: "15px" }}>{instructor.firstName} {instructor.lastName}</td>
+              <td style={{ padding: "15px", fontSize: "15px" }}>{instructor.email}</td>
+              <td style={{ padding: "15px", fontSize: "15px" }}>{instructor.phone}</td>
+              <td style={{ padding: "15px", fontSize: "15px" }}>{instructor.faculty}</td>
+              <td style={{ padding: "15px", fontSize: "15px" }}>{getAvailabilityStatus(instructor.availability)}</td>
+              <td style={{ padding: "15px" }}>
+                <Link
+                  to={`/updateinstructor/${instructor._id}`}
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    borderRadius: "5px",
+                    fontSize: "14px",
+                    textDecoration: "none",
+                    marginRight: "10px",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = "#218838")}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = "#28a745")}
+                >
+                  Update
+                </Link>
+                <button
+                  onClick={() => deleteInstructor(instructor._id)}
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor: "#dc3545",
+                    color: "white",
+                    borderRadius: "5px",
+                    fontSize: "14px",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = "#c82333")}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = "#dc3545")}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
