@@ -7,7 +7,7 @@ function Nav() {
     <nav className="navbar">
       <ul className="nav-list">
         <li className="nav-item">
-          <Link to="/mainhome" className="nav-link">Home</Link>
+          <Link to="/Home" className="nav-link">Home</Link>
         </li>
         <li className="nav-item">
           <Link to="/StudentDetails" className="nav-link">Students</Link>
