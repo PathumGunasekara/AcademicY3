@@ -3,26 +3,89 @@ import { Link } from "react-router-dom";
 
 function StudentNav() {
   return (
-    <div className="flex flex-col">
+    <div style={{
+      fontFamily: 'Arial, sans-serif',
+      width: '100%',
+      marginBottom: '30px'
+    }}>
       <header>
-        <div className="flex justify-center p-1 bg-slate-300 mt-5 mx-auto rounded-lg">
-          <ul className="flex gap-12 font-bold">
-            <Link to="/UserHomePage">
-              <li className="hover:bg-slate-400 text-xl h-12 flex items-center rounded-lg p-2">
-                Home
-              </li>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '10px',
+          backgroundColor: '#f5f5f5',
+          marginTop: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          maxWidth: '1200px',
+          margin: '20px auto'
+        }}>
+          <div style={{
+            display: 'flex',
+            gap: '20px',
+            fontWeight: 'bold'
+          }}>
+            <Link to="/Home" style={{ textDecoration: 'none' }}>
+              <button style={{
+                backgroundColor: '#003366',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '600',
+                padding: '12px 24px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                ':hover': {
+                  backgroundColor: '#004080',
+                  transform: 'translateY(-2px)'
+                }
+              }}>
+                Back to Home
+              </button>
             </Link>
-            <Link to="/AddStudent">
-              <li className="hover:bg-slate-400 text-xl h-12 flex items-center rounded-lg p-2">
+            <Link to="/AddStudent" style={{ textDecoration: 'none' }}>
+              <button style={{
+                backgroundColor: '#003366',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '600',
+                padding: '12px 24px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                ':hover': {
+                  backgroundColor: '#004080',
+                  transform: 'translateY(-2px)'
+                }
+              }}>
                 Add Student
-              </li>
+              </button>
             </Link>
-            <Link to="/CategoryDetails">
-              <li className="hover:bg-slate-400 text-xl h-12 flex items-center rounded-lg p-2">
+            <Link to="/StudentDetails" style={{ textDecoration: 'none' }}>
+              <button style={{
+                backgroundColor: '#003366',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '600',
+                padding: '12px 24px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                ':hover': {
+                  backgroundColor: '#004080',
+                  transform: 'translateY(-2px)'
+                }
+              }}>
                 Students Details
-              </li>
+              </button>
             </Link>
-          </ul>
+          </div>
         </div>
       </header>
     </div>

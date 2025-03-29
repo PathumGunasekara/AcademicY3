@@ -5,7 +5,8 @@ import StudentNav from "../StudentNav/StudentNav";
 function StudentHome() {
   return (
     <div>
-        <Nav/>
+     
+        <StudentNav/>
       <h1>Student Home Page</h1>
     </div>
   )
