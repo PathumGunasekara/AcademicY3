@@ -45,43 +45,47 @@ const Exams = () => {
   const generateReport = () => {
     const doc = new jsPDF();
 
-    // Title
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Exams Report", 14, 22);
+    
     doc.setFontSize(16);
-    doc.text("Exams Report", 14, 15);
+    doc.text("University Of Hilltop", 14, 28);
 
-    // Define table columns
-    const columns = [
-      "Course Name",
-      "Course Code",
-      "Exam Type",
-      "Date",
-      "Start Time",
-      "Duration (minutes)",
-      "End Time",
-      "Location",
-    ];
+    doc.setFontSize(12);
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    doc.text(`Date: ${currentDate}`, 14, 36);
+    doc.text(`Time: ${currentTime}`, 14, 42);
 
-    // Map exam data to table rows
-    const rows = exams.map((exam) => [
-      exam.courseName,
-      exam.courseCode,
-      exam.examType,
-      new Date(exam.date).toLocaleDateString(),
-      exam.startTime,
-      exam.duration,
-      exam.endTime,
-      exam.location,
-    ]);
+    doc.line(14, 46, 200, 46);
 
-    // Generate table
-    autoTable(doc, {
-      startY: 20, // Positioning below the title
-      head: [columns],
-      body: rows,
-    });
+    if (exams.length > 0) {
+      autoTable(doc, {
+        startY: 51,
+        head: [['Course Name', 'Course Code', 'Exam Type', 'Date', 'Start Time', 'Duration', 'End Time', 'Location']],
+        body: exams.map(exam => [
+          exam.courseName,
+          exam.courseCode,
+          exam.examType,
+          new Date(exam.date).toLocaleDateString(),
+          exam.startTime,
+          exam.duration,
+          exam.endTime,
+          exam.location,
+        ]),
+        headStyles: { fillColor: [41, 87, 141], textColor: [255, 255, 255] },
+        bodyStyles: { fontSize: 10 },
+        alternateRowStyles: { fillColor: [240, 240, 240] },
+        margin: { left: 14, right: 14 },
+        theme: 'grid',
+      });
+    } else {
+      doc.text("No exam details available.", 14, 56);
+    }
 
-    // Save the PDF
-    doc.save("exams_report.pdf");
+    doc.text("Signature: _____________________", 14, doc.lastAutoTable?.finalY + 20 || 76);
+    doc.save(`Exams_Report_${currentDate}.pdf`);
   };
 
   // Filter exams based on search term (course name or code)
@@ -101,9 +105,14 @@ const Exams = () => {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ textAlign: "center" }}>Exams List</h1>
+      <h1 style={{ 
+        textAlign: "center", 
+        fontSize: "32px", 
+        fontWeight: "bold",
+        marginBottom: "20px"
+      }}>Exams List</h1>
 
-      <div style={{ marginBottom: "10px", display: "flex", justifyContent: "space-between" }}>
+      <div style={{ marginBottom: "30px", display: "flex", justifyContent: "space-between" }}>
         <div style={{ display: "flex", gap: "10px" }}>
           <input
             type="text"
@@ -113,7 +122,7 @@ const Exams = () => {
             style={{
               padding: "10px",
               borderRadius: "5px",
-              border: "1px solid #ddd",
+              border: "1px solid #000", // Changed to black border
               minWidth: "300px",
             }}
           />
@@ -153,7 +162,7 @@ const Exams = () => {
             width: "100%",
             borderCollapse: "collapse",
             textAlign: "left",
-            marginTop: "10px",
+            marginTop: "20px",
           }}
         >
           <thead>
@@ -174,8 +183,10 @@ const Exams = () => {
                   style={{
                     border: "1px solid black",
                     padding: "8px",
-                    backgroundColor: "#f2f2f2",
+                    backgroundColor: "#002366",
+                    color: "white",
                     textAlign: "center",
+                    fontWeight: "bold",
                   }}
                 >
                   {header}
