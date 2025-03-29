@@ -1,67 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-function AddUpdateInstructor() {
-  const { id } = useParams(); // Get instructor ID from URL (for updating)
-  const navigate = useNavigate();
-
-  const [instructor, setInstructor] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    faculty: '',
+function AddInstructor() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    faculty: "Faculty of Computing",
   });
 
-  useEffect(() => {
-    if (id) {
-      // Fetch instructor details if updating
-      axios.get(`http://localhost:5000/instructors/${id}`)
-        .then(response => {
-          setInstructor(response.data);
-        })
-        .catch(error => console.error("Error fetching instructor details:", error));
-    }
-  }, [id]);
+  const navigate = useNavigate();
 
+  // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInstructor({ ...instructor, [name]: value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (id) {
-      // Update instructor
-      axios.put(`http://localhost:5000/instructors/${id}`, instructor)
-        .then(() => {
-          alert('Instructor updated successfully!');
-          navigate('/instructors');
-        })
-        .catch(error => alert('Error updating instructor:', error));
-    } else {
-      // Add new instructor
-      axios.post('http://localhost:5000/instructors', instructor)
-        .then(() => {
-          alert('Instructor added successfully!');
-          navigate('/InstructorHome');
-        })
-        .catch(error => alert('Error adding instructor:', error));
-    }
+    axios
+      .post("http://localhost:5000/instructors", formData)
+      .then(() => {
+        alert("Instructor added successfully!");
+        navigate("/InstructorHome"); // Redirect to the instructor list page
+      })
+      .catch((error) => {
+        console.error("Error adding instructor:", error);
+        alert("Failed to add instructor");
+      });
   };
 
   return (
-    <div>
-      <h2>{id ? "Update Instructor" : "Add New Instructor"}</h2>
+    <div className="container mt-4">
+      <h2>Add New Instructor</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>First Name</label>
           <input
             type="text"
-            className="form-control"
             name="firstName"
-            value={instructor.firstName}
+            className="form-control"
+            value={formData.firstName}
             onChange={handleChange}
             required
           />
@@ -71,9 +53,9 @@ function AddUpdateInstructor() {
           <label>Last Name</label>
           <input
             type="text"
-            className="form-control"
             name="lastName"
-            value={instructor.lastName}
+            className="form-control"
+            value={formData.lastName}
             onChange={handleChange}
             required
           />
@@ -83,9 +65,9 @@ function AddUpdateInstructor() {
           <label>Email</label>
           <input
             type="email"
-            className="form-control"
             name="email"
-            value={instructor.email}
+            className="form-control"
+            value={formData.email}
             onChange={handleChange}
             required
           />
@@ -95,9 +77,9 @@ function AddUpdateInstructor() {
           <label>Phone</label>
           <input
             type="text"
-            className="form-control"
             name="phone"
-            value={instructor.phone}
+            className="form-control"
+            value={formData.phone}
             onChange={handleChange}
             required
           />
@@ -106,25 +88,22 @@ function AddUpdateInstructor() {
         <div className="form-group">
           <label>Faculty</label>
           <select
-            className="form-control"
             name="faculty"
-            value={instructor.faculty}
+            className="form-control"
+            value={formData.faculty}
             onChange={handleChange}
             required
           >
-            <option value="">Select Faculty</option>
             <option value="Faculty of Computing">Faculty of Computing</option>
             <option value="Faculty of Engineering">Faculty of Engineering</option>
             <option value="Faculty of Business">Faculty of Business</option>
           </select>
         </div>
 
-        <button type="submit" className="btn btn-primary mt-3">
-          {id ? "Update Instructor" : "Add Instructor"}
-        </button>
+        <button type="submit" className="btn btn-primary mt-3">Add Instructor</button>
       </form>
     </div>
   );
 }
 
-export default AddUpdateInstructor;
+export default AddInstructor;
