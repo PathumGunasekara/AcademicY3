@@ -8,6 +8,7 @@ const Exams = () => {
   const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchExams = async () => {
@@ -83,6 +84,13 @@ const Exams = () => {
     doc.save("exams_report.pdf");
   };
 
+  // Filter exams based on search term (course name or code)
+  const filteredExams = exams.filter(
+    (exam) =>
+      exam.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      exam.courseCode.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return <div style={{ textAlign: "center", padding: "20px" }}>Loading...</div>;
   }
@@ -96,19 +104,33 @@ const Exams = () => {
       <h1 style={{ textAlign: "center" }}>Exams List</h1>
 
       <div style={{ marginBottom: "10px", display: "flex", justifyContent: "space-between" }}>
-        <button
-          onClick={generateReport}
-          style={{
-            padding: "10px 15px",
-            backgroundColor: "#6c757d",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-            borderRadius: "5px",
-          }}
-        >
-          Generate Report
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <input
+            type="text"
+            placeholder="Search by course name or code..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              padding: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ddd",
+              minWidth: "300px",
+            }}
+          />
+          <button
+            onClick={generateReport}
+            style={{
+              padding: "10px 15px",
+              backgroundColor: "#6c757d",
+              color: "white",
+              border: "none",
+              cursor: "pointer",
+              borderRadius: "5px",
+            }}
+          >
+            Generate Report
+          </button>
+        </div>
         <Link to="/addexam">
           <button
             style={{
@@ -125,7 +147,7 @@ const Exams = () => {
         </Link>
       </div>
 
-      {exams.length > 0 ? (
+      {filteredExams.length > 0 ? (
         <table
           style={{
             width: "100%",
@@ -162,7 +184,7 @@ const Exams = () => {
             </tr>
           </thead>
           <tbody>
-            {exams.map((exam) => (
+            {filteredExams.map((exam) => (
               <tr key={exam._id}>
                 <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
                   {exam.courseName}
@@ -223,7 +245,9 @@ const Exams = () => {
           </tbody>
         </table>
       ) : (
-        <p style={{ textAlign: "center", marginTop: "20px" }}>No exams found.</p>
+        <p style={{ textAlign: "center", marginTop: "20px" }}>
+          {searchTerm ? "No matching exams found" : "No exams found"}
+        </p>
       )}
     </div>
   );
