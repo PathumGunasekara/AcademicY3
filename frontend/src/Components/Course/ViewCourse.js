@@ -55,74 +55,49 @@ const ViewCourse = () => {
     navigate("/addcourse");
   };
 
-  // Generate PDF
+  // Generate PDF - Updated to match StudentDetails style
   const generatePDF = () => {
-    // Initialize jsPDF
     const doc = new jsPDF();
 
-    // Register the autoTable plugin
-    autoTable(doc, {
-      startY: 40,
-      head: [
-        [
-          "Course Name",
-          "Code",
-          "Instructor",
-          "Credits",
-          "Department",
-          "Description",
-        ],
-      ],
-      body: filteredCourses.map((course) => [
-        course.courseName,
-        course.courseCode,
-        course.instructorName,
-        course.credits,
-        course.department,
-        course.courseDescription,
-      ]),
-      theme: "grid",
-      headStyles: {
-        fillColor: [79, 70, 229], // indigo-600
-        textColor: 255,
-        fontStyle: "bold",
-      },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251], // gray-50
-      },
-      styles: {
-        cellPadding: 3,
-        fontSize: 10,
-        valign: "middle",
-      },
-      columnStyles: {
-        0: { cellWidth: "auto" },
-        1: { cellWidth: "auto" },
-        2: { cellWidth: "auto" },
-        3: { cellWidth: "auto" },
-        4: { cellWidth: "auto" },
-        5: { cellWidth: "wrap" },
-      },
-      margin: { top: 40 },
-    });
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Course Details Report", 14, 22);
+    
+    doc.setFontSize(16);
+    doc.text("University Of Hilltop", 14, 28);
 
-    // Add title
-    doc.setFontSize(20);
-    doc.setTextColor(40);
-    doc.text("Course Details Report", 15, 20);
+    doc.setFontSize(12);
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    doc.text(`Date: ${currentDate}`, 14, 36);
+    doc.text(`Time: ${currentTime}`, 14, 42);
 
-    // Add date
-    doc.setFontSize(10);
-    doc.text(`Generated on: ${new Date().toLocaleString()}`, 15, 30);
+    doc.line(14, 46, 200, 46);
 
-    // Save the PDF
-    doc.save(`course-report-${new Date().toISOString().slice(0, 10)}.pdf`);
+    if (filteredCourses.length > 0) {
+      autoTable(doc, {
+        startY: 51,
+        head: [['Course Name', 'Code', 'Instructor', 'Credits', 'Department', 'Description']],
+        body: filteredCourses.map(course => [
+          course.courseName,
+          course.courseCode,
+          course.instructorName,
+          course.credits,
+          course.department,
+          course.courseDescription,
+        ]),
+        headStyles: { fillColor: [41, 87, 141], textColor: [255, 255, 255] },
+        bodyStyles: { fontSize: 10 },
+        alternateRowStyles: { fillColor: [240, 240, 240] },
+        margin: { left: 14, right: 14 },
+        theme: 'grid',
+      });
+    } else {
+      doc.text("No course details available.", 14, 56);
+    }
 
-    Swal.fire(
-      "Success!",
-      "PDF report has been generated and downloaded.",
-      "success"
-    );
+    doc.text("Signature: _____________________", 14, doc.lastAutoTable?.finalY + 20 || 76);
+    doc.save(`Course_Details_Report_${currentDate}.pdf`);
   };
 
   // Enable Editing
