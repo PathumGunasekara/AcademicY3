@@ -29,6 +29,7 @@ import UpdateInstructor from './Components/Instructor/UpdateInstructor';
 
 
 
+
 function App() {
 
 
@@ -62,7 +63,11 @@ function App() {
             <Route path="/updateinstructor/:id" element={<UpdateInstructor />} />
 
 
- Development
+ 
+            <Route path="/" element={<Home/>}/>
+            <Route path="/instructors" element={<InstructorHome />} />
+            <Route path="/instructor-availability" element={<ManageAvailability />} />
+
         </Routes>
       </React.Fragment>
     </div>
