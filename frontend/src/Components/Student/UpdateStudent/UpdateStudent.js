@@ -113,24 +113,98 @@ function UpdateStudent() {
   };
 
   return (
-    <div>
-      <h1>Update Student</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Name</label>
-        <br />
-        <input type="text" name="Name" onChange={handleChange} value={inputs.Name || ''} required />
-        <span style={{ color: "red" }}>{errors.Name}</span>
+    <div style={{ 
+      fontFamily: 'Arial, sans-serif', 
+      padding: '20px',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh'
+    }}>
+      <h1 style={{ 
+        textAlign: 'center', 
+        color: '#003366',
+        marginBottom: '30px',
+        textTransform: 'uppercase',
+        letterSpacing: '1px'
+      }}>Update Student</h1>
+      <form onSubmit={handleSubmit} style={{ 
+        width: '60%', 
+        margin: '0 auto', 
+        padding: '30px', 
+        backgroundColor: 'white', 
+        borderRadius: '8px', 
+        boxShadow: '0 4px 12px rgba(0, 51, 102, 0.1)',
+        borderTop: '4px solid #FFD700'
+      }}>
+        <label style={{ 
+          fontWeight: 'bold', 
+          color: '#003366',
+          display: 'block',
+          marginBottom: '5px'
+        }}>Name</label>
+        <input 
+          type="text" 
+          name="Name" 
+          onChange={handleChange} 
+          value={inputs.Name || ''} 
+          required 
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            margin: '8px 0', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px',
+            boxSizing: 'border-box'
+          }} 
+        />
+        <span style={{ color: "#cc0000", fontSize: '0.9em' }}>{errors.Name}</span>
         <br /><br />
 
-        <label>Student ID</label>
-        <br />
-        <input type="text" name="Id" onChange={handleChange} value={inputs.Id || ''} required />
-        <span style={{ color: "red" }}>{errors.Id}</span>
+        <label style={{ 
+          fontWeight: 'bold', 
+          color: '#003366',
+          display: 'block',
+          marginBottom: '5px'
+        }}>Student ID</label>
+        <input 
+          type="text" 
+          name="Id" 
+          onChange={handleChange} 
+          value={inputs.Id || ''} 
+          required 
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            margin: '8px 0', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px',
+            boxSizing: 'border-box'
+          }} 
+        />
+        <span style={{ color: "#cc0000", fontSize: '0.9em' }}>{errors.Id}</span>
         <br /><br />
 
-        <label>Course</label>
-        <br />
-        <select name="Course" onChange={handleChange} value={inputs.Course || ''} required>
+        <label style={{ 
+          fontWeight: 'bold', 
+          color: '#003366',
+          display: 'block',
+          marginBottom: '5px'
+        }}>Course</label>
+        <select 
+          name="Course" 
+          onChange={handleChange} 
+          value={inputs.Course || ''} 
+          required 
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            margin: '8px 0', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px',
+            boxSizing: 'border-box',
+            backgroundColor: 'white',
+            cursor: 'pointer'
+          }}
+        >
           <option value="">Select Course</option>
           <option value="Computing">Faculty of Computing</option>
           <option value="Engineering">Faculty of Engineering</option>
@@ -139,8 +213,12 @@ function UpdateStudent() {
         </select>
         <br /><br />
 
-        <label>Date of Birth</label>
-        <br />
+        <label style={{ 
+          fontWeight: 'bold', 
+          color: '#003366',
+          display: 'block',
+          marginBottom: '5px'
+        }}>Date of Birth</label>
         <input
           type="date"
           name="DateOfBirth"
@@ -148,12 +226,39 @@ function UpdateStudent() {
           value={inputs.DateOfBirth || ''}
           max={getTodayDate()}
           required
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            margin: '8px 0', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px',
+            boxSizing: 'border-box'
+          }}
         />
         <br /><br />
 
-        <label>Gender</label>
-        <br />
-        <select name="Gender" onChange={handleChange} value={inputs.Gender || ''} required>
+        <label style={{ 
+          fontWeight: 'bold', 
+          color: '#003366',
+          display: 'block',
+          marginBottom: '5px'
+        }}>Gender</label>
+        <select 
+          name="Gender" 
+          onChange={handleChange} 
+          value={inputs.Gender || ''} 
+          required 
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            margin: '8px 0', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px',
+            boxSizing: 'border-box',
+            backgroundColor: 'white',
+            cursor: 'pointer'
+          }}
+        >
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
@@ -161,23 +266,95 @@ function UpdateStudent() {
         </select>
         <br /><br />
 
-        <label>Phone Number</label>
-        <br />
-        <input type="text" name="Phone" onChange={handleChange} value={inputs.Phone || ''} required />
-        <span style={{ color: "red" }}>{errors.Phone}</span>
+        <label style={{ 
+          fontWeight: 'bold', 
+          color: '#003366',
+          display: 'block',
+          marginBottom: '5px'
+        }}>Phone Number</label>
+        <input 
+          type="text" 
+          name="Phone" 
+          onChange={handleChange} 
+          value={inputs.Phone || ''} 
+          required 
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            margin: '8px 0', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px',
+            boxSizing: 'border-box'
+          }} 
+        />
+        <span style={{ color: "#cc0000", fontSize: '0.9em' }}>{errors.Phone}</span>
         <br /><br />
 
-        <label>Email Address</label>
-        <br />
-        <input type="email" name="Email" onChange={handleChange} value={inputs.Email || ''} required />
+        <label style={{ 
+          fontWeight: 'bold', 
+          color: '#003366',
+          display: 'block',
+          marginBottom: '5px'
+        }}>Email Address</label>
+        <input 
+          type="email" 
+          name="Email" 
+          onChange={handleChange} 
+          value={inputs.Email || ''} 
+          required 
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            margin: '8px 0', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px',
+            boxSizing: 'border-box'
+          }} 
+        />
         <br /><br />
 
-        <label>Address</label>
-        <br />
-        <input type="text" name="Address" onChange={handleChange} value={inputs.Address || ''} required />
+        <label style={{ 
+          fontWeight: 'bold', 
+          color: '#003366',
+          display: 'block',
+          marginBottom: '5px'
+        }}>Address</label>
+        <input 
+          type="text" 
+          name="Address" 
+          onChange={handleChange} 
+          value={inputs.Address || ''} 
+          required 
+          style={{ 
+            width: '100%', 
+            padding: '12px', 
+            margin: '8px 0', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px',
+            boxSizing: 'border-box'
+          }} 
+        />
         <br /><br />
 
-        <button type="submit">Submit</button>
+        <button 
+          type="submit" 
+          style={{ 
+            backgroundColor: '#003366',
+            color: 'white', 
+            padding: '12px 24px', 
+            border: 'none', 
+            borderRadius: '4px', 
+            cursor: 'pointer',
+            fontSize: '1em',
+            fontWeight: '600',
+            transition: 'background-color 0.3s',
+            ':hover': {
+              backgroundColor: '#004080'
+            }
+          }}
+        >
+          Update Student
+        </button>
       </form>
     </div>
   );

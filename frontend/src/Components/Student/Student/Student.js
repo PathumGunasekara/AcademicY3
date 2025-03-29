@@ -20,7 +20,7 @@ function Student({ student, onDelete }) { // Accept an `onDelete` prop to update
 
   return (
     <div>
-      <h1>Student Display</h1>
+      
       <br />
       
       <h1>Name: {Name}</h1>
