@@ -3,22 +3,85 @@ import { Link } from "react-router-dom";
 
 function StudentNav() {
   return (
-    <div className="flex flex-col">
+    <div style={{
+      fontFamily: 'Arial, sans-serif',
+      width: '100%',
+      marginBottom: '30px'
+    }}>
       <header>
-        <div className="flex justify-center p-1 bg-slate-300 mt-5 mx-auto rounded-lg">
-          <div className="flex gap-6 font-bold">
-            <Link to="/Home">
-              <button className="bg-slate-400 hover:bg-slate-500 text-white text-xl font-semibold py-2 px-4 rounded-lg">
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '10px',
+          backgroundColor: '#f5f5f5',
+          marginTop: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          maxWidth: '1200px',
+          margin: '20px auto'
+        }}>
+          <div style={{
+            display: 'flex',
+            gap: '20px',
+            fontWeight: 'bold'
+          }}>
+            <Link to="/Home" style={{ textDecoration: 'none' }}>
+              <button style={{
+                backgroundColor: '#003366',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '600',
+                padding: '12px 24px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                ':hover': {
+                  backgroundColor: '#004080',
+                  transform: 'translateY(-2px)'
+                }
+              }}>
                 Back to Home
               </button>
             </Link>
-            <Link to="/AddStudent">
-              <button className="bg-slate-400 hover:bg-slate-500 text-white text-xl font-semibold py-2 px-4 rounded-lg">
+            <Link to="/AddStudent" style={{ textDecoration: 'none' }}>
+              <button style={{
+                backgroundColor: '#003366',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '600',
+                padding: '12px 24px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                ':hover': {
+                  backgroundColor: '#004080',
+                  transform: 'translateY(-2px)'
+                }
+              }}>
                 Add Student
               </button>
             </Link>
-            <Link to="/StudentDetails">
-              <button className="bg-slate-400 hover:bg-slate-500 text-white text-xl font-semibold py-2 px-4 rounded-lg">
+            <Link to="/StudentDetails" style={{ textDecoration: 'none' }}>
+              <button style={{
+                backgroundColor: '#003366',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '600',
+                padding: '12px 24px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                ':hover': {
+                  backgroundColor: '#004080',
+                  transform: 'translateY(-2px)'
+                }
+              }}>
                 Students Details
               </button>
             </Link>
