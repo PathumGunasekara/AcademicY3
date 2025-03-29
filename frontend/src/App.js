@@ -5,6 +5,7 @@ import './App.css';
 import RegisterForm from "./Components/Register/RegisterForm";
 import LoginForm from "./Components/Login/LoginForm";
 import Home from "./Components/UserHomePage/Home";
+<<<<<<< Updated upstream
 import StudentHome from "./Components/Student/StudentHome/StudentHome";
  
 
@@ -26,6 +27,11 @@ import InstructorHome from './Components/Instructor/InstructorHome';
 import ManageAvailability from './Components/Instructor/ManageAvailability';
 import AddInstructor from './Components/Instructor/AddInstructor';
 import UpdateInstructor from './Components/Instructor/UpdateInstructor';
+=======
+import InstructorHome from './Components/Instructor/instructorHome/InstructorHome';
+import InstructorAvailability from './Components/Instructor/instructorHome/InstructorAvailability';
+
+>>>>>>> Stashed changes
 
 
 
@@ -38,6 +44,7 @@ function App() {
       
       <React.Fragment>
         <Routes>
+<<<<<<< Updated upstream
             
             <Route path ="/Home" element={<Home/>}/>
             <Route path="/StudentHome" element={<StudentHome/>}/>
@@ -63,6 +70,11 @@ function App() {
 
 
  Development
+=======
+            <Route path="/" element={<Home/>}/>
+            <Route path="/instructors" element={<InstructorHome />} />
+            <Route path="/instructor-availability" element={<InstructorAvailability />} />
+>>>>>>> Stashed changes
         </Routes>
       </React.Fragment>
     </div>
