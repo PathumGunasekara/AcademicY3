@@ -75,7 +75,15 @@ const UpdateExam = () => {
       }
     }
 
-    // Date Validation: Cannot select a past date
+    // Validation for Location (must include numbers and letters, can include hyphen)
+    if (name === "location") {
+      if (processedValue && !/^[A-Za-z0-9\s-]+$/.test(processedValue)) {
+        setError("Location must contain letters and numbers");
+        return;
+      }
+    }
+
+    // Validation for Date (cannot be a past date)
     if (name === "date") {
       const selectedDate = new Date(processedValue);
       const currentDate = new Date();
@@ -87,7 +95,7 @@ const UpdateExam = () => {
       }
     }
 
-    // Start Time Validation: Must be after the current time (if today)
+    // Validation for Start Time (if the date is today, start time must be after the current time)
     if (name === "startTime") {
       const selectedDate = new Date(formData.date);
       const currentDate = new Date();
@@ -104,7 +112,7 @@ const UpdateExam = () => {
       }
     }
 
-    // End Time Validation: Must be after Start Time
+    // Validation: End Time must be after Start Time
     if (name === "endTime" && formData.startTime) {
       const startTimeInMinutes = new Date(`${formData.date}T${formData.startTime}`).getTime();
       const endTimeInMinutes = new Date(`${formData.date}T${processedValue}`).getTime();
@@ -144,6 +152,12 @@ const UpdateExam = () => {
     // Final validation check before submitting
     if (!/^[A-Z]{2}[0-9]{4}$/.test(formData.courseCode)) {
       setError("Course code must be 2 uppercase letters followed by 4 numbers (e.g., IT2020)");
+      return;
+    }
+
+    // Check location format
+    if (!/^[A-Za-z0-9\s-]+$/.test(formData.location)) {
+      setError("Location must contain letters and numbers (hyphens allowed)");
       return;
     }
 
@@ -396,7 +410,12 @@ const UpdateExam = () => {
               borderRadius: "4px",
               fontSize: "16px"
             }}
+            pattern="[A-Za-z0-9\s-]+"
+            title="Must contain letters and numbers (hyphens allowed)"
           />
+          {error.includes("Location") && (
+            <p style={{ color: "red", margin: "5px 0 0", fontSize: "14px" }}>{error}</p>
+          )}
         </div>
         <button type="submit" style={{
           padding: "10px 15px",
