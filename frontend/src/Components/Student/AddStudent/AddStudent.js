@@ -26,79 +26,35 @@ function AddStudent() {
         const { name, value } = e.target;
         let errorMessage = "";
 
-        // Name Validation - only letters and spaces
         if (name === "Name") {
-            if (/^[a-zA-Z ]*$/.test(value)) {
-                setInputs(prevState => ({ ...prevState, [name]: value }));
-                errorMessage = "";
-            } else {
-                errorMessage = "Name must contain only letters.";
-            }
+            errorMessage = /^[a-zA-Z ]*$/.test(value) ? "" : "Name must contain only letters.";
+        } else if (name === "Id") {
+            errorMessage = /^[A-Z]{2}[0-9]{8}$/.test(value) ? "" : "Student ID must start with two uppercase letters followed by 8 digits.";
+        } else if (name === "Phone") {
+            errorMessage = /^[0-9]{10}$/.test(value) ? "" : "Phone number must contain exactly 10 digits.";
         }
 
-        // Student ID Validation - first two uppercase letters, followed by 8 digits, total length 10
-        else if (name === "Id") {
-            // Allow typing but only valid characters
-            if (/^[A-Z]{0,2}[0-9]{0,8}$/.test(value)) {
-                setInputs(prevState => ({ ...prevState, [name]: value }));
-                // Check if the format is fully valid and show the message
-                if (value.length === 10 && /^[A-Z]{2}[0-9]{8}$/.test(value)) {
-                    errorMessage = "";
-                } else {
-                    errorMessage = "Student ID must start with two uppercase letters followed by 8 digits, total of 10 characters (e.g., IT22233776).";
-                }
-            } else {
-                errorMessage = "Invalid characters in Student ID.";
-            }
-        }
-
-        // Phone Validation - only 10 digits, no letters or special characters
-        else if (name === "Phone") {
-            // Only allow numbers and ensure it's exactly 10 digits
-            if (/^[0-9]{0,10}$/.test(value)) {
-                setInputs(prevState => ({ ...prevState, [name]: value }));
-                // Check if the length is 10 digits
-                if (value.length === 10) {
-                    errorMessage = "";
-                } else {
-                    errorMessage = "Phone number must contain exactly 10 digits.";
-                }
-            } else {
-                errorMessage = "Phone number must contain only digits.";
-            }
-        } else {
-            setInputs(prevState => ({ ...prevState, [name]: value }));
-        }
-
+        setInputs(prevState => ({ ...prevState, [name]: value }));
         setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(inputs);
-        
         try {
-            await sendRequest();
+            await axios.post("http://localhost:5000/students", inputs);
             navigate('/StudentDetails');
         } catch (error) {
             console.error("Error submitting form:", error);
         }
     };
 
-    const sendRequest = async () => {
-        return await axios.post("http://localhost:5000/students", inputs);
-    };
-
-    // Get today's date in YYYY-MM-DD format
     const getTodayDate = () => {
         const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return today.toISOString().split('T')[0];
     };
 
     return (
+
         <div style={{ 
             fontFamily: 'Arial, sans-serif', 
             padding: '20px',
@@ -348,6 +304,51 @@ function AddStudent() {
                 >
                     Submit
                 </button>
+
+        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+            <StudentNav />
+            <h1 style={{ textAlign: 'center', color: '#003366' }}>Add Student</h1>
+            <form onSubmit={handleSubmit} style={{ maxWidth: '500px', margin: 'auto', background: '#f9f9f9', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' }}>
+                {['Name', 'Id', 'Phone'].map(field => (
+                    <div key={field} style={{ marginBottom: '15px' }}>
+                        <label style={{ fontWeight: 'bold' }}>{field}</label><br />
+                        <input type="text" name={field} onChange={handleChange} value={inputs[field]} required style={{ width: '100%', padding: '8px', marginTop: '5px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                        <span style={{ color: 'red', fontSize: '12px' }}>{errors[field]}</span>
+                    </div>
+                ))}
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ fontWeight: 'bold' }}>Faculty</label><br />
+                    <select name="Course" onChange={handleChange} value={inputs.Course} required style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}>
+                        <option value="">Select Faculty</option>
+                        <option value="Computing">Faculty of Computing</option>
+                        <option value="Engineering">Faculty of Engineering</option>
+                        <option value="Science">Faculty of Science</option>
+                        <option value="Business">Faculty of Business</option>
+                    </select>
+                </div>
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ fontWeight: 'bold' }}>Date of Birth</label><br />
+                    <input type="date" name="DateOfBirth" onChange={handleChange} value={inputs.DateOfBirth} max={getTodayDate()} required style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                </div>
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ fontWeight: 'bold' }}>Gender</label><br />
+                    <select name="Gender" onChange={handleChange} value={inputs.Gender} required style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ fontWeight: 'bold' }}>Email Address</label><br />
+                    <input type="email" name="Email" onChange={handleChange} value={inputs.Email} required style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                </div>
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ fontWeight: 'bold' }}>Address</label><br />
+                    <textarea name="Address" rows="4" onChange={handleChange} value={inputs.Address} required style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                </div>
+                <button type="submit" style={{ width: '100%', padding: '10px', background: '#003366', color: 'white', borderRadius: '5px', border: 'none', fontSize: '16px', cursor: 'pointer' }}>Submit</button>
+
             </form>
         </div>
     );
