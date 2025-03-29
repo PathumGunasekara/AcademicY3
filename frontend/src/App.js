@@ -48,7 +48,7 @@ function App() {
             <Route path="/StudentHome" element={<StudentHome/>}/>
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
- Pathum
+            <Route path="/Home" element={<Home />} />
            
            <Route path="/AddStudent" element={<AddStudent/>}/>
             <Route path="/StudentDetails" element={<StudentDetails/>}/>

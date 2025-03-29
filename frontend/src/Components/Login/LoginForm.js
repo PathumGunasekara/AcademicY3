@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import Nav from "../Nav/Nav";
+//import Nav from "../Nav/Nav";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const LoginForm = () => {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
-        navigate("/");
+        navigate("/UserHomePage");
       }
     } catch (error) {
       console.error("Login error:", error);
