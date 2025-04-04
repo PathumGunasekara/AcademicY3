@@ -17,28 +17,21 @@ const AddExam = () => {
     location: "",
   });
 
+  // List of course codes for the dropdown
+  const courseCodes = [
+    "IT1010", "IT1030", "IT2020", "IT2030", 
+    "IT3010", "IT3020", "IT4010", "IT4020",
+    "BM1010", "BM2010", "BM3010", "BM4010"
+  ];
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     let processedValue = value;
-
-    // Process course code input to enforce uppercase and limit length
-    if (name === "courseCode") {
-      processedValue = value.toUpperCase().slice(0, 6); // Convert to uppercase and limit to 6 chars
-    }
 
     // Validation for Course Name (only letters allowed)
     if (name === "courseName") {
       if (processedValue && !/^[A-Za-z\s]+$/.test(processedValue)) {
         setError("Course name should only contain letters and spaces.");
-        return;
-      }
-    }
-
-    // Validation for Course Code (must begin with 2 uppercase letters followed by 4 numbers)
-    if (name === "courseCode") {
-      // Allow typing but show error if invalid characters are entered
-      if (processedValue && !/^[A-Z]{0,2}[0-9]{0,4}$/.test(processedValue)) {
-        setError("Only letters and numbers allowed (format: LLNNNN)");
         return;
       }
     }
@@ -102,21 +95,10 @@ const AddExam = () => {
     });
   };
 
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    if (name === "courseCode" && value && !/^[A-Z]{2}[0-9]{4}$/.test(value)) {
-      setError("Course code must be 2 uppercase letters followed by 4 numbers (e.g., IT2020)");
-    }
-  };
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Final validation check before submitting
-    if (!/^[A-Z]{2}[0-9]{4}$/.test(formData.courseCode)) {
-      setError("Course code must be 2 uppercase letters followed by 4 numbers (e.g., IT2020)");
-      return;
-    }
 
     // Check if there is any error before submitting
     if (error) {
@@ -196,27 +178,25 @@ const AddExam = () => {
             fontWeight: "bold",
             color: "#555"
           }}>Course Code:</label>
-          <input
-            type="text"
+          <select
             name="courseCode"
             value={formData.courseCode}
             onChange={handleChange}
-            onBlur={handleBlur}
             required
             style={{
               padding: "8px",
               border: "1px solid #ddd",
               borderRadius: "4px",
-              fontSize: "16px",
-              textTransform: "uppercase"
+              fontSize: "16px"
             }}
-            maxLength={6}
-            pattern="[A-Z]{2}[0-9]{4}"
-            title="2 uppercase letters followed by 4 numbers (e.g., IT2020)"
-          />
-          {error.includes("Course code") && (
-            <p style={{ color: "red", margin: "5px 0 0", fontSize: "14px" }}>{error}</p>
-          )}
+          >
+            <option value="">Select a course code</option>
+            {courseCodes.map((code) => (
+              <option key={code} value={code}>
+                {code}
+              </option>
+            ))}
+          </select>
         </div>
         <div style={{
           display: "flex",
