@@ -33,6 +33,7 @@ const Exams = () => {
     try {
       const response = await axios.delete(`http://localhost:5000/exams/${id}`);
       if (response.status === 200) {
+        alert("Exam deleted successfully");
         setExams(exams.filter((exam) => exam._id !== id));
       } else {
         setError("Failed to delete exam");
