@@ -2,92 +2,114 @@ const Course = require("../Model/CourseModel");
 
 // Get all courses
 const getAllCourses = async (req, res) => {
-    try {
-        const courses = await Course.find();
-        if (!courses.length) {
-            return res.status(404).json({ message: "Courses not found" });
-        }
-        return res.status(200).json({ courses });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Internal server error" });
+  try {
+    const courses = await Course.find();
+    if (!courses.length) {
+      return res.status(404).json({ message: "No courses found" });
     }
+    return res.status(200).json({ courses });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 // Add a new course
-const addCourses = async (req, res) => {
-    const { courseName, courseCode, instructorName, credits } = req.body;
+const addCourse = async (req, res) => {
+  const {
+    courseName,
+    courseCode,
+    instructorName,
+    credits,
+    department,
+    courseDescription,
+  } = req.body;
 
-    try {
-        const newCourse = new Course({ courseName, courseCode, instructorName, credits });
-        await newCourse.save();
-        return res.status(201).json({ course: newCourse });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Failed to add course" });
+  try {
+    // Check if courseCode already exists
+    const existingCourse = await Course.findOne({ courseCode });
+    if (existingCourse) {
+      return res
+        .status(400)
+        .json({ message: "Course with this code already exists" });
     }
+
+    const newCourse = new Course({
+      courseName,
+      courseCode,
+      instructorName,
+      credits,
+      department,
+      courseDescription,
+    });
+
+    await newCourse.save();
+    return res.status(201).json({ course: newCourse });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Failed to add course" });
+  }
 };
 
-// Get course by ID
+// Get course by Course Code
 const getById = async (req, res) => {
-    const { id } = req.params;
+  try {
+    const course = await Course.findOne({ courseCode: req.params.courseCode });
 
-    try {
-        const course = await Course.findById(id);
-        if (!course) {
-            return res.status(404).json({ message: "Course not found" });
-        }
-        return res.status(200).json({ course });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Internal server error" });
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
     }
+
+    return res.status(200).json({ course });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
-// Update course details
+// Update course by Course Code
 const updateCourse = async (req, res) => {
-    const { id } = req.params;
-    const { courseName, courseCode, instructorName, credits } = req.body;
+  try {
+    const updatedCourse = await Course.findOneAndUpdate(
+      { courseCode: req.params.courseCode },
+      req.body,
+      { new: true, runValidators: true }
+    );
 
-    try {
-        const updatedCourse = await Course.findByIdAndUpdate(
-            id,
-            { courseName, courseCode, instructorName, credits },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedCourse) {
-            return res.status(404).json({ message: "Course not found" });
-        }
-
-        return res.status(200).json({ course: updatedCourse });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Failed to update course" });
+    if (!updatedCourse) {
+      return res.status(404).json({ message: "Course not found" });
     }
+
+    return res.status(200).json({ course: updatedCourse });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Failed to update course" });
+  }
 };
 
-// Delete course
+// Delete course by Course Code
 const deleteCourse = async (req, res) => {
-    const { id } = req.params;
+  try {
+    const deletedCourse = await Course.findOneAndDelete({
+      courseCode: req.params.courseCode,
+    });
 
-    try {
-        const deletedCourse = await Course.findByIdAndDelete(id);
-        if (!deletedCourse) {
-            return res.status(404).json({ message: "Unable to delete course" });
-        }
-        return res.status(200).json({ message: "Course deleted successfully" });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Internal server error" });
+    if (!deletedCourse) {
+      return res.status(404).json({ message: "Course not found" });
     }
+
+    return res.status(200).json({ message: "Course deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 // Export controllers
 module.exports = {
-    getAllCourses,
-    addCourses,
-    getById,
-    updateCourse,
-    deleteCourse
+  getAllCourses,
+  addCourse,
+  getById,
+  updateCourse,
+  deleteCourse,
 };

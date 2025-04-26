@@ -3,7 +3,7 @@ import StudentNav from "../StudentNav/StudentNav";
 import axios from "axios";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import Student from '../Student/Student';
+import { Link } from 'react-router-dom';
 
 const URL = "http://localhost:5000/students";
 
@@ -24,24 +24,32 @@ function StudentDetails() {
     fetchHandler().then((data) => setStudents(data.students));
   }, []);
 
+  const deleteHandler = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this student?");
+    if (confirmDelete) {
+      try {
+        await axios.delete(`${URL}/${id}`);
+        setStudents(students.filter(student => student._id !== id));
+      } catch (error) {
+        console.error("Error deleting student:", error);
+      }
+    }
+  };
+
   const generateReport = () => {
     const doc = new jsPDF();
-
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
     doc.text("Student Details Report", 14, 22);
-    
     doc.setFontSize(16);
     doc.text("University Of Hilltop", 14, 28);
-
     doc.setFontSize(12);
     const currentDate = new Date().toLocaleDateString();
     const currentTime = new Date().toLocaleTimeString();
     doc.text(`Date: ${currentDate}`, 14, 36);
     doc.text(`Time: ${currentTime}`, 14, 42);
-
     doc.line(14, 46, 200, 46);
-
+    
     if (students.length > 0) {
       autoTable(doc, {
         startY: 51,
@@ -65,7 +73,7 @@ function StudentDetails() {
     } else {
       doc.text("No student details available.", 14, 56);
     }
-
+    
     doc.text("Signature: _____________________", 14, doc.lastAutoTable?.finalY + 20 || 76);
     doc.save(`Student_Details_Report_${currentDate}.pdf`);
   };
@@ -73,17 +81,50 @@ function StudentDetails() {
   return (
     <div>
       <StudentNav />
-      <h1>Student Details Display Page</h1>
-      <button onClick={generateReport} style={{ marginBottom: '20px', padding: '10px', backgroundColor: 'blue', color: 'white', border: 'none', cursor: 'pointer' }}>
+      <h4 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '30px', fontWeight: 'bold', color: '#2c3e50' }}>
+  Student Details</h4>
+      <button onClick={generateReport} style={{ display: 'block', margin: '0 auto 20px', padding: '10px', backgroundColor: 'blue', color: 'white', border: 'none', cursor: 'pointer' }}>
         Download PDF Report
       </button>
-      <div>
-        {students && students.map((student, i) => (
-          <div key={i}>
-            <Student student={student} />
-          </div>
-        ))}
-      </div>
+      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <thead>
+          <tr style={{ backgroundColor: '#29578D', color: 'white' }}>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>ID</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Name</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Date of Birth</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Gender</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Phone</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Email</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Address</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Course</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {students.length > 0 ? (
+            students.map((student, i) => (
+              <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#f2f2f2' : 'white' }}>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Id}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Name}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.DateOfBirth}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Gender}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Phone}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Email}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Address}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Course}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                  <Link to={`/StudentDetails/${student._id}`} style={{ marginRight: '10px', padding: '5px 10px', backgroundColor: 'green', color: 'white', textDecoration: 'none', borderRadius: '5px' }}>Update</Link>
+                  <button onClick={() => deleteHandler(student._id)} style={{ padding: '5px 10px', backgroundColor: 'red', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Delete</button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="9" style={{ textAlign: 'center', padding: '10px' }}>No Student Records Found</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

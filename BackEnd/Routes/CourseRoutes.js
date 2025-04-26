@@ -1,16 +1,18 @@
 const express = require("express");
 const router = express.Router();
+const {
+  getAllCourses,
+  addCourse,
+  getById,
+  updateCourse,
+  deleteCourse,
+} = require("../Controllers/CourseControllers");
 
-//Insert model
-const User = require("../Model/CourseModel");
-
-//Course Controller
-const courseControllers = require("../Controllers/CourseControllers");
-
-router.get("/", courseControllers.getAllCourses);
-router.post("/", courseControllers.addCourses);
-router.get("/:id", courseControllers.getById);
-router.put("/:id", courseControllers.updateCourse);
-router.delete("/:id", courseControllers.deleteCourse);
+// Define Routes
+router.get("/", getAllCourses);
+router.post("/", addCourse);
+router.get("/:courseCode", getById);
+router.put("/:courseCode", updateCourse);
+router.delete("/:courseCode", deleteCourse);
 
 module.exports = router;

@@ -7,6 +7,10 @@ import LoginForm from "./Components/Login/LoginForm";
 import Home from "./Components/UserHomePage/Home";
 import StudentHome from "./Components/Student/StudentHome/StudentHome";
  
+import AddCourse from "./Components/Course/AddCourse";
+import UpdateCourse from "./Components/Course/UpdateCourse";
+import DeleteCourse from "./Components/Course/DeleteCourse";
+import ViewCourse from "./Components/Course/ViewCourse";
 
 import AddStudent from './Components/Student/AddStudent/AddStudent';
 import StudentDetails from './Components/Student/StudentDetails/StudentDetails';
@@ -40,11 +44,11 @@ function App() {
       <React.Fragment>
         <Routes>
             
-            <Route path ="/Home" element={<Home/>}/>
+            <Route path="/" element={<Home />} />
             <Route path="/StudentHome" element={<StudentHome/>}/>
             <Route path="/login" element={<LoginForm />} />
-            <Route path="/" element={<RegisterForm />} />
- Pathum
+            <Route path="/register" element={<RegisterForm />} />
+            <Route path="/Home" element={<Home />} />
            
            <Route path="/AddStudent" element={<AddStudent/>}/>
             <Route path="/StudentDetails" element={<StudentDetails/>}/>
@@ -67,6 +71,11 @@ function App() {
             <Route path="/" element={<Home/>}/>
             <Route path="/instructors" element={<InstructorHome />} />
             <Route path="/instructor-availability" element={<ManageAvailability />} />
+
+            <Route path="/courses" element={<ViewCourse />} />
+            <Route path="/addcourse" element={<AddCourse />} />
+            <Route path="/updatecourse/:courseCode" element={<UpdateCourse />} />
+            <Route path="/deletecourse/:courseCode" element={<DeleteCourse />} />
 
         </Routes>
       </React.Fragment>
