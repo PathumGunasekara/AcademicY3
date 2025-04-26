@@ -20,7 +20,7 @@ app.use("/courses", courseRouter);
 app.use("/users",userrouter);
 
 
-mongoose.connect("mongodb+srv://AcademicAdmin:UsHzE0AhhEcPuH5f@clusteracademic.4hese.mongodb.net/")
+mongoose.connect("mongodb+srv://pathumgunasekara18:47aBtFRufClFQEbi@clusteracademic.4bote2z.mongodb.net/")
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(5000, () => {
