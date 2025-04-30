@@ -33,14 +33,15 @@ const addExams = async (req, res, next) => {
         await exams.save();
     }catch (err) {
         console.log(err); 
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 
     //not insert exams
-    if (!Exam){
+    if (!exams){
         return res.status(404).json({message:"unable to add exams"});
 
     }
-    return res.status(200).json({ exams });
+    return res.status(201).json({ exams });
 };
 
 //get by id
@@ -116,4 +117,4 @@ exports.getAllExams = getAllExams;
 exports.addExams = addExams;
 exports.getById = getById; 
 exports.updateExam = updateExam;
-exports.deleteExam = deleteExam; 
+exports.deleteExam = deleteExam;
