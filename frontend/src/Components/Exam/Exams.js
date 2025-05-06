@@ -43,6 +43,12 @@ const Exams = () => {
     }
   };
 
+  const filteredExams = exams.filter(
+    (exam) =>
+      exam.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      exam.courseCode.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const generateReport = () => {
     const doc = new jsPDF();
 
@@ -61,11 +67,11 @@ const Exams = () => {
 
     doc.line(14, 46, 200, 46);
 
-    if (exams.length > 0) {
+    if (filteredExams.length > 0) {
       autoTable(doc, {
         startY: 51,
         head: [['Course Name', 'Course Code', 'Exam Type', 'Date', 'Start Time', 'Duration', 'End Time', 'Location']],
-        body: exams.map(exam => [
+        body: filteredExams.map(exam => [
           exam.courseName,
           exam.courseCode,
           exam.examType,
@@ -88,13 +94,6 @@ const Exams = () => {
     doc.text("Signature: _____________________", 14, doc.lastAutoTable?.finalY + 20 || 76);
     doc.save(`Exams_Report_${currentDate}.pdf`);
   };
-
-  // Filter exams based on search term (course name or code)
-  const filteredExams = exams.filter(
-    (exam) =>
-      exam.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      exam.courseCode.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   if (loading) {
     return <div style={{ textAlign: "center", padding: "20px" }}>Loading...</div>;
