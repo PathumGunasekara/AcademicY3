@@ -32,6 +32,9 @@ import AddInstructor from './Components/Instructor/AddInstructor';
 import UpdateInstructor from './Components/Instructor/UpdateInstructor';
 
 
+import AdminSwapHome from './Components/special/AdminSwapHome';
+
+
 
 
 function App() {
@@ -76,6 +79,8 @@ function App() {
             <Route path="/addcourse" element={<AddCourse />} />
             <Route path="/updatecourse/:courseCode" element={<UpdateCourse />} />
             <Route path="/deletecourse/:courseCode" element={<DeleteCourse />} />
+
+            <Route path="/AdminSwapHome" element={<AdminSwapHome />} />
 
         </Routes>
       </React.Fragment>
