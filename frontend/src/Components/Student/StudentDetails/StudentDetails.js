@@ -4,6 +4,7 @@ import axios from "axios";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Link } from 'react-router-dom';
+import Nav from "../../Nav/Nav";
 
 const URL = "http://localhost:5000/students";
 
@@ -80,6 +81,7 @@ function StudentDetails() {
 
   return (
     <div>
+      <Nav />
       <StudentNav />
       <h4 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '30px', fontWeight: 'bold', color: '#2c3e50' }}>
   Student Details</h4>

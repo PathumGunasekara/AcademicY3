@@ -1,4 +1,5 @@
 import React from 'react';
+import Nav from "../Nav/Nav";
 
 
 function Exam({ exam }) {
@@ -21,6 +22,7 @@ const history = useNavigate();
 
   return (
     <div>
+      <Nav />
       <h2>Course Name: {courseName || 'N/A'}</h2>
       <h2>Course Code: {courseCode || 'N/A'}</h2>
       <h2>Exam Type: {examType || 'N/A'}</h2>

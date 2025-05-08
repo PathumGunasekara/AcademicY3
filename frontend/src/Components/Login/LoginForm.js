@@ -35,7 +35,7 @@ const LoginForm = () => {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
-        navigate("/UserHomePage");
+        navigate("/home");
       }
     } catch (error) {
       console.error("Login error:", error);
