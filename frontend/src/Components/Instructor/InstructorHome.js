@@ -5,6 +5,7 @@ import { confirmAlert } from "react-confirm-alert"; // Popup for delete confirma
 import "react-confirm-alert/src/react-confirm-alert.css"; // Importing styles for confirmAlert
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import Nav from "../Nav/Nav";
 
 function InstructorHome() {
   const [instructors, setInstructors] = useState([]);
@@ -119,7 +120,22 @@ function InstructorHome() {
   };
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", marginTop: "30px", backgroundColor: "#f4f7fb", padding: "30px", borderRadius: "8px" }}>
+    <div style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#f4f7fb" }}>
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000
+      }}>
+        <Nav />
+      </div>
+      <div style={{
+        marginTop: "80px", // Adjust this value based on your Nav height
+        padding: "30px",
+        borderRadius: "8px"
+      }}>
+      </div>
       <h2 style={{ color: "#004080", marginBottom: "25px", fontSize: "28px", textAlign: "center" }}>Instructor Management</h2>
       <div style={{ marginBottom: "25px", textAlign: "center" }}>
         <Link
