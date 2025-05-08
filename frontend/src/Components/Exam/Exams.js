@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import Nav from "../Nav/Nav"; // Make sure to import your Nav component
 
 const Exams = () => {
   const [exams, setExams] = useState([]);
@@ -97,170 +98,187 @@ const Exams = () => {
   );
 
   if (loading) {
-    return <div style={{ textAlign: "center", padding: "20px" }}>Loading...</div>;
+    return <div style={{ textAlign: "center", padding: "20px", marginTop: "80px" }}>Loading...</div>;
   }
 
   if (error) {
-    return <div style={{ textAlign: "center", color: "red", padding: "20px" }}>Error: {error}</div>;
+    return <div style={{ textAlign: "center", color: "red", padding: "20px", marginTop: "80px" }}>Error: {error}</div>;
   }
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ 
-        textAlign: "center", 
-        fontSize: "32px", 
-        fontWeight: "bold",
-        marginBottom: "20px"
-      }}>Exams List</h1>
-
-      <div style={{ marginBottom: "30px", display: "flex", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <input
-            type="text"
-            placeholder="Search by course name or code..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              padding: "10px",
-              borderRadius: "5px",
-              border: "1px solid #000", // Changed to black border
-              minWidth: "300px",
-            }}
-          />
-          <button
-            onClick={generateReport}
-            style={{
-              padding: "10px 15px",
-              backgroundColor: "#6c757d",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-              borderRadius: "5px",
-            }}
-          >
-            Generate Report
-          </button>
-        </div>
-        <Link to="/addexam">
-          <button
-            style={{
-              padding: "10px 15px",
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-              borderRadius: "5px",
-            }}
-          >
-            Add Exam
-          </button>
-        </Link>
+    <div style={{ fontFamily: "Arial, sans-serif" }}>
+      {/* Fixed Navigation Bar */}
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000
+      }}>
+        <Nav />
       </div>
 
-      {filteredExams.length > 0 ? (
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            textAlign: "left",
-            marginTop: "20px",
-          }}
-        >
-          <thead>
-            <tr>
-              {[
-                "Course Name",
-                "Course Code",
-                "Exam Type",
-                "Date",
-                "Start Time",
-                "Duration (minutes)",
-                "End Time",
-                "Location",
-                "Action",
-              ].map((header) => (
-                <th
-                  key={header}
-                  style={{
-                    border: "1px solid black",
-                    padding: "8px",
-                    backgroundColor: "#002366",
-                    color: "white",
-                    textAlign: "center",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredExams.map((exam) => (
-              <tr key={exam._id}>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  {exam.courseName}
-                </td>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  {exam.courseCode}
-                </td>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  {exam.examType}
-                </td>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  {new Date(exam.date).toLocaleDateString()}
-                </td>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  {exam.startTime}
-                </td>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  {exam.duration}
-                </td>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  {exam.endTime}
-                </td>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  {exam.location}
-                </td>
-                <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
-                  <Link to={`/examdetails/${exam._id}`}>
+      {/* Main Content */}
+      <div style={{ 
+        padding: "20px", 
+        marginTop: "80px" // Adjust this based on your Nav height
+      }}>
+        <h1 style={{ 
+          textAlign: "center", 
+          fontSize: "32px", 
+          fontWeight: "bold",
+          marginBottom: "20px"
+        }}>Exams List</h1>
+
+        <div style={{ marginBottom: "30px", display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <input
+              type="text"
+              placeholder="Search by course name or code..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #000",
+                minWidth: "300px",
+              }}
+            />
+            <button
+              onClick={generateReport}
+              style={{
+                padding: "10px 15px",
+                backgroundColor: "#6c757d",
+                color: "white",
+                border: "none",
+                cursor: "pointer",
+                borderRadius: "5px",
+              }}
+            >
+              Generate Report
+            </button>
+          </div>
+          <Link to="/addexam">
+            <button
+              style={{
+                padding: "10px 15px",
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                cursor: "pointer",
+                borderRadius: "5px",
+              }}
+            >
+              Add Exam
+            </button>
+          </Link>
+        </div>
+
+        {filteredExams.length > 0 ? (
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              textAlign: "left",
+              marginTop: "20px",
+            }}
+          >
+            <thead>
+              <tr>
+                {[
+                  "Course Name",
+                  "Course Code",
+                  "Exam Type",
+                  "Date",
+                  "Start Time",
+                  "Duration (minutes)",
+                  "End Time",
+                  "Location",
+                  "Action",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    style={{
+                      border: "1px solid black",
+                      padding: "8px",
+                      backgroundColor: "#002366",
+                      color: "white",
+                      textAlign: "center",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredExams.map((exam) => (
+                <tr key={exam._id}>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    {exam.courseName}
+                  </td>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    {exam.courseCode}
+                  </td>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    {exam.examType}
+                  </td>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    {new Date(exam.date).toLocaleDateString()}
+                  </td>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    {exam.startTime}
+                  </td>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    {exam.duration}
+                  </td>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    {exam.endTime}
+                  </td>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    {exam.location}
+                  </td>
+                  <td style={{ border: "1px solid black", padding: "8px", textAlign: "center" }}>
+                    <Link to={`/examdetails/${exam._id}`}>
+                      <button
+                        style={{
+                          marginRight: "5px",
+                          padding: "5px 10px",
+                          cursor: "pointer",
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "3px",
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </Link>
                     <button
+                      onClick={() => handleDelete(exam._id)}
                       style={{
-                        marginRight: "5px",
                         padding: "5px 10px",
                         cursor: "pointer",
-                        backgroundColor: "#007bff",
+                        backgroundColor: "red",
                         color: "white",
                         border: "none",
                         borderRadius: "3px",
                       }}
                     >
-                      Edit
+                      Delete
                     </button>
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(exam._id)}
-                    style={{
-                      padding: "5px 10px",
-                      cursor: "pointer",
-                      backgroundColor: "red",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "3px",
-                    }}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p style={{ textAlign: "center", marginTop: "20px" }}>
-          {searchTerm ? "No matching exams found" : "No exams found"}
-        </p>
-      )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p style={{ textAlign: "center", marginTop: "20px" }}>
+            {searchTerm ? "No matching exams found" : "No exams found"}
+          </p>
+        )}
+      </div>
     </div>
   );
 };
