@@ -33,15 +33,14 @@ const addExams = async (req, res, next) => {
         await exams.save();
     }catch (err) {
         console.log(err); 
-        return res.status(500).json({ message: "Internal Server Error" });
     }
 
     //not insert exams
-    if (!exams){
+    if (!Exam){
         return res.status(404).json({message:"unable to add exams"});
 
     }
-    return res.status(201).json({ exams });
+    return res.status(200).json({ exams });
 };
 
 //get by id
@@ -106,15 +105,15 @@ const deleteExam = async (req, res, next) => {
     }
     if (!exams){
         return res.status(404).json({message:"unable to delete exam details"});
-  
-    } 
+
+    }
     return res.status(200).json({ exams });
 };
 
- 
+
 
 exports.getAllExams = getAllExams;
 exports.addExams = addExams;
-exports.getById = getById; 
+exports.getById = getById;
 exports.updateExam = updateExam;
 exports.deleteExam = deleteExam;
