@@ -44,7 +44,7 @@ function App() {
       <React.Fragment>
         <Routes>
             
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<RegisterForm/>} />
             <Route path="/StudentHome" element={<StudentHome/>}/>
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
