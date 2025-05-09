@@ -5,6 +5,7 @@ const instructerRouter = require("./Routes/InstructerRoutes");
 const examRouter = require("./Routes/ExamRoutes");
 const courseRouter = require("./Routes/CourseRoutes");
 const userrouter = require("./Routes/UserRoutes");  
+const sessionRoutes = require('./Routes/sessionRoutes');
 
 const app = express();
 const cors = require("cors");
@@ -18,6 +19,7 @@ app.use("/instructors", instructerRouter);
 app.use("/exams", examRouter);
 app.use("/courses", courseRouter);
 app.use("/users",userrouter);
+app.use('/api/sessions', sessionRoutes);
 
 
 mongoose.connect("mongodb+srv://pathumgunasekara18:933PyvRoWmqZa45f@clusteracademic.4bote2z.mongodb.net/")
