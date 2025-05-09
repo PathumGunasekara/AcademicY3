@@ -1,16 +1,15 @@
-const express = require('express');
+import express from 'express';
+import { createSession, getSessionsByInstructor, getAllSessions } from '../Controllers/sessionController.js';
+
 const router = express.Router();
-const { createSession, getSessionsByInstructor } = require('../Controllers/sessionController');
 
+// Create a new session
 router.post('/', createSession);
-router.get('/', async (req, res) => {
-    try {
-      const sessions = await Session.find();
-      res.status(200).json({ sessions });
-    } catch (error) {
-      console.error("Error fetching sessions:", error);
-      res.status(500).json({ message: "Server Error" });
-    }
-  });
 
-module.exports = router;
+// Get all sessions
+router.get('/', getAllSessions);
+
+// Get sessions by instructor ID
+router.get('/:id', getSessionsByInstructor);
+
+export default router;

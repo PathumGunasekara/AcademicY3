@@ -31,6 +31,17 @@ export const createSession = async (req, res) => {
   }
 };
 
+// Get all sessions
+export const getAllSessions = async (req, res) => {
+  try {
+    const sessions = await Session.find();
+    res.status(200).json(sessions);
+  } catch (error) {
+    console.error("Error fetching sessions:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 // Get all sessions for an instructor
 export const getSessionsByInstructor = async (req, res) => {
   try {
