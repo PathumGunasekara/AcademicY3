@@ -1,213 +1,236 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Nav from "../Nav/Nav";
-import { useNavigate } from "react-router-dom";
 
 function SpecialNewHome() {
   const [instructors, setInstructors] = useState([]);
   const [showFormFor, setShowFormFor] = useState(null);
-  const [formData, setFormData] = useState({
-    startTime: "",
-    endTime: "",
-    moduleName: "",
-    moduleCode: "",
-    location: "",
-    description: ""
-  });
+  const [formData, setFormData] = useState(initialFormData());
+  const [editing, setEditing] = useState({ instructorId: null, sessionIndex: null });
 
-  const navigate = useNavigate();
+  function initialFormData() {
+    return {
+      startTime: "",
+      endTime: "",
+      moduleName: "",
+      moduleCode: "",
+      location: "",
+      description: ""
+    };
+  }
 
-  useEffect(() => {
-    fetchInstructors();
-  }, []);
+  const LOCAL_SESSIONS_KEY = "allocatedSessions";
 
-  const fetchInstructors = () => {
-    axios
-      .get("http://localhost:5000/instructors")
-      .then((response) => {
-        setInstructors(response.data.instructors);
-      })
-      .catch((error) => {
-        console.error("Error fetching instructors:", error);
-      });
+  const loadStoredSessions = () => {
+    try {
+      return JSON.parse(localStorage.getItem(LOCAL_SESSIONS_KEY)) || {};
+    } catch (e) {
+      return {};
+    }
   };
 
+  const storeSessions = (sessionMap) => {
+    localStorage.setItem(LOCAL_SESSIONS_KEY, JSON.stringify(sessionMap));
+  };
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/instructors")
+      .then((res) => {
+        const fetched = res.data.instructors;
+        const savedSessions = loadStoredSessions();
+
+        const updated = fetched.map((inst) => ({
+          ...inst,
+          sessions: [...(inst.sessions || []), ...(savedSessions[inst._id] || [])]
+        }));
+
+        setInstructors(updated);
+      })
+      .catch((err) => console.error("Fetch error:", err));
+  }, []);
+
   const getAvailabilityStatus = (availability) => {
-    if (!availability || availability.length === 0) return "Not Available";
+    if (!availability?.length) return "Not Available";
     const now = new Date();
     const currentDay = now.toLocaleString("en-us", { weekday: "long" });
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    for (const slot of availability) {
-      if (slot.day === currentDay) {
-        const [startH, startM] = slot.startTime.split(":").map(Number);
-        const [endH, endM] = slot.endTime.split(":").map(Number);
-        const startMin = startH * 60 + startM;
-        const endMin = endH * 60 + endM;
-        if (currentMinutes >= startMin && currentMinutes <= endMin) {
-          return "Available";
-        }
-      }
-    }
-    return "Not Available";
+    return availability.some(({ day, startTime, endTime }) => {
+      if (day !== currentDay) return false;
+      const [startH, startM] = startTime.split(":").map(Number);
+      const [endH, endM] = endTime.split(":").map(Number);
+      const start = startH * 60 + startM;
+      const end = endH * 60 + endM;
+      return currentMinutes >= start && currentMinutes <= end;
+    }) ? "Available" : "Not Available";
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleFormSubmit = async (e, instructorId) => {
+  const handleFormSubmit = (e, instructorId) => {
     e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:5000/api/sessions", {
-        ...formData,
-        instructorId
-      });
-      alert("Session successfully created!");
 
-      // Update the instructor's sessions locally
-      setInstructors((prevInstructors) =>
-        prevInstructors.map((instructor) =>
-          instructor._id === instructorId
-            ? {
-                ...instructor,
-                sessions: [...(instructor.sessions || []), response.data.session]
-              }
-            : instructor
-        )
-      );
+    setInstructors(prev => {
+      const updated = prev.map(inst => {
+        if (inst._id === instructorId) {
+          const allSessions = loadStoredSessions();
+          const newSessions = [...(inst.sessions || [])];
 
-      setShowFormFor(null);
-      setFormData({
-        startTime: "",
-        endTime: "",
-        moduleName: "",
-        moduleCode: "",
-        location: "",
-        description: ""
+          if (editing.instructorId === instructorId && editing.sessionIndex !== null) {
+            // Edit mode
+            newSessions[editing.sessionIndex] = { ...formData };
+            allSessions[instructorId] = newSessions;
+          } else {
+            // Add mode
+            newSessions.push({ ...formData });
+            allSessions[instructorId] = newSessions;
+          }
+
+          storeSessions(allSessions);
+          return { ...inst, sessions: newSessions };
+        }
+        return inst;
       });
-    } catch (error) {
-      console.error("Error creating session:", error);
-      alert("Failed to create session.");
-    }
+
+      return updated;
+    });
+
+    setShowFormFor(null);
+    setEditing({ instructorId: null, sessionIndex: null });
+    setFormData(initialFormData());
+    alert(editing.sessionIndex !== null ? "Session updated." : "Session allocated.");
+  };
+
+  const handleEdit = (instructorId, sessionIndex) => {
+    const instructor = instructors.find(i => i._id === instructorId);
+    const session = instructor.sessions[sessionIndex];
+
+    setFormData(session);
+    setShowFormFor(instructorId);
+    setEditing({ instructorId, sessionIndex });
+  };
+
+  const handleDelete = (instructorId, sessionIndex) => {
+    if (!window.confirm("Are you sure you want to delete this session?")) return;
+
+    setInstructors(prev => {
+      const updated = prev.map(inst => {
+        if (inst._id === instructorId) {
+          const newSessions = [...inst.sessions];
+          newSessions.splice(sessionIndex, 1);
+          const allSessions = loadStoredSessions();
+          allSessions[instructorId] = newSessions;
+          storeSessions(allSessions);
+          return { ...inst, sessions: newSessions };
+        }
+        return inst;
+      });
+
+      return updated;
+    });
   };
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#f4f7fb", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "Arial", backgroundColor: "#f4f7fb", minHeight: "100vh" }}>
       <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000 }}>
         <Nav />
       </div>
 
-      <div style={{ marginTop: "90px", padding: "30px" }}>
-        <h2 style={{ color: "#003366", fontSize: "28px", textAlign: "center", marginBottom: "30px" }}>
-          Set Time Allocations
-        </h2>
+      <div style={{ marginTop: 90, padding: 30 }}>
+        <h2 style={{ textAlign: "center", color: "#003366" }}>Set Time Allocations</h2>
 
-        {/* Main Table for Instructors */}
-        <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "white", boxShadow: "0 0 10px rgba(0,0,0,0.1)" }}>
-          <thead style={{ backgroundColor: "#0052cc", color: "white" }}>
+        <table style={{ width: "100%", background: "#fff", borderCollapse: "collapse", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
+          <thead style={{ backgroundColor: "#0052cc", color: "#fff" }}>
             <tr>
-              <th style={{ padding: "10px" }}>Name</th>
-              <th style={{ padding: "10px" }}>Faculty</th>
-              <th style={{ padding: "10px" }}>Email</th>
-              <th style={{ padding: "10px" }}>Availability</th>
-              <th style={{ padding: "10px" }}>Action</th>
+              <th>Name</th><th>Faculty</th><th>Email</th><th>Availability</th><th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {instructors.length > 0 ? (
-              instructors.map((i) => {
-                const status = getAvailabilityStatus(i.availability);
-                return (
-                  <React.Fragment key={i._id}>
-                    <tr style={{ textAlign: "center", borderBottom: "1px solid #ddd" }}>
-                      <td style={{ padding: "10px" }}>{i.firstName} {i.lastName}</td>
-                      <td>{i.faculty}</td>
-                      <td>{i.email}</td>
-                      <td>{status}</td>
-                      <td>
-                        {status === "Available" && (
-                          <button
-                            style={{ backgroundColor: "#28a745", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer" }}
-                            onClick={() => setShowFormFor(i._id)}
-                          >
-                            Allocate
+            {instructors.map(inst => {
+              const status = getAvailabilityStatus(inst.availability);
+              return (
+                <React.Fragment key={inst._id}>
+                  <tr style={{ textAlign: "center" }}>
+                    <td>{inst.firstName} {inst.lastName}</td>
+                    <td>{inst.faculty}</td>
+                    <td>{inst.email}</td>
+                    <td>{status}</td>
+                    <td>
+                      {status === "Available" && (
+                        <button
+                          onClick={() => {
+                            setShowFormFor(inst._id);
+                            setFormData(initialFormData());
+                            setEditing({ instructorId: null, sessionIndex: null });
+                          }}
+                          style={{ background: "#28a745", color: "#fff", padding: "6px 12px", borderRadius: 4 }}
+                        >
+                          Allocate
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                  {showFormFor === inst._id && (
+                    <tr>
+                      <td colSpan="5" style={{ padding: 20 }}>
+                        <form onSubmit={(e) => handleFormSubmit(e, inst._id)} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                          <div>
+                            <input type="time" name="startTime" value={formData.startTime} onChange={handleInputChange} required />
+                            <input type="time" name="endTime" value={formData.endTime} onChange={handleInputChange} required style={{ marginLeft: 10 }} />
+                          </div>
+                          <div>
+                            <input type="text" name="moduleName" placeholder="Module Name" value={formData.moduleName} onChange={handleInputChange} required />
+                            <input type="text" name="moduleCode" placeholder="Module Code" value={formData.moduleCode} onChange={handleInputChange} required style={{ marginLeft: 10 }} />
+                          </div>
+                          <div>
+                            <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleInputChange} required />
+                            <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} required style={{ marginLeft: 10 }} />
+                          </div>
+                          <button type="submit" style={{ background: "#0052cc", color: "#fff", padding: "8px 16px", borderRadius: 4 }}>
+                            {editing.sessionIndex !== null ? "Update Session" : "Submit"}
                           </button>
-                        )}
+                        </form>
                       </td>
                     </tr>
-
-                    {showFormFor === i._id && (
-                      <tr>
-                        <td colSpan="5">
-                          <form onSubmit={(e) => handleFormSubmit(e, i._id)} style={{ padding: "20px", backgroundColor: "#eef", marginTop: "10px" }}>
-                            <div style={{ marginBottom: "10px" }}>
-                              <input type="time" name="startTime" value={formData.startTime} onChange={handleInputChange} required />
-                              <input type="time" name="endTime" value={formData.endTime} onChange={handleInputChange} required style={{ marginLeft: "10px" }} />
-                            </div>
-                            <div style={{ marginBottom: "10px" }}>
-                              <input type="text" name="moduleName" value={formData.moduleName} onChange={handleInputChange} required placeholder="Module Name" />
-                              <input type="text" name="moduleCode" value={formData.moduleCode} onChange={handleInputChange} required placeholder="Module Code" style={{ marginLeft: "10px" }} />
-                            </div>
-                            <div style={{ marginBottom: "10px" }}>
-                              <input type="text" name="location" value={formData.location} onChange={handleInputChange} required placeholder="Location" />
-                              <input type="text" name="description" value={formData.description} onChange={handleInputChange} required placeholder="Description" style={{ marginLeft: "10px" }} />
-                            </div>
-                            <button type="submit" style={{ backgroundColor: "#0052cc", color: "white", padding: "8px 16px", border: "none", borderRadius: "4px" }}>
-                              Submit
-                            </button>
-                          </form>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="5" style={{ padding: "15px", textAlign: "center" }}>
-                  No instructors found.
-                </td>
-              </tr>
-            )}
+                  )}
+                </React.Fragment>
+              );
+            })}
           </tbody>
         </table>
 
-        {/* New Table for Sessions */}
-        <div style={{ marginTop: "50px" }}>
-          <h3 style={{ color: "#003366", fontSize: "24px", textAlign: "center", marginBottom: "20px" }}>
-            Allocated Sessions
-          </h3>
-          <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "white", boxShadow: "0 0 10px rgba(0,0,0,0.1)" }}>
-            <thead style={{ backgroundColor: "#0052cc", color: "white" }}>
+        <div style={{ marginTop: 50 }}>
+          <h3 style={{ textAlign: "center", color: "#003366" }}>Allocated Sessions</h3>
+          <table style={{ width: "100%", background: "#fff", borderCollapse: "collapse", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
+            <thead style={{ backgroundColor: "#0052cc", color: "#fff" }}>
               <tr>
-                <th style={{ padding: "10px" }}>Instructor</th>
-                <th style={{ padding: "10px" }}>Module Name</th>
-                <th style={{ padding: "10px" }}>Module Code</th>
-                <th style={{ padding: "10px" }}>Start Time</th>
-                <th style={{ padding: "10px" }}>End Time</th>
-                <th style={{ padding: "10px" }}>Location</th>
+                <th>Instructor</th><th>Module</th><th>Code</th><th>Start</th><th>End</th><th>Location</th><th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {instructors.flatMap((instructor) =>
-                instructor.sessions?.map((session, index) => (
-                  <tr key={`${instructor._id}-${index}`} style={{ textAlign: "center", borderBottom: "1px solid #ddd" }}>
-                    <td style={{ padding: "10px" }}>{instructor.firstName} {instructor.lastName}</td>
-                    <td>{session.moduleName}</td>
-                    <td>{session.moduleCode}</td>
-                    <td>{session.startTime}</td>
-                    <td>{session.endTime}</td>
-                    <td>{session.location}</td>
+              {instructors.flatMap(inst =>
+                (inst.sessions || []).map((s, idx) => (
+                  <tr key={`${inst._id}-${idx}`} style={{ textAlign: "center" }}>
+                    <td>{inst.firstName} {inst.lastName}</td>
+                    <td>{s.moduleName}</td>
+                    <td>{s.moduleCode}</td>
+                    <td>{s.startTime}</td>
+                    <td>{s.endTime}</td>
+                    <td>{s.location}</td>
+                    <td>
+                      <button onClick={() => handleEdit(inst._id, idx)} style={{ marginRight: 6, background: "#ffc107", color: "#000", padding: "4px 10px", borderRadius: 4 }}>
+                        Edit
+                      </button>
+                      <button onClick={() => handleDelete(inst._id, idx)} style={{ background: "#dc3545", color: "#fff", padding: "4px 10px", borderRadius: 4 }}>
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
-              {instructors.every((instructor) => !instructor.sessions?.length) && (
-                <tr>
-                  <td colSpan="6" style={{ padding: "15px", textAlign: "center" }}>
-                    No sessions allocated yet.
-                  </td>
-                </tr>
+              {instructors.every(i => !i.sessions?.length) && (
+                <tr><td colSpan="7" style={{ textAlign: "center", padding: 20 }}>No sessions allocated.</td></tr>
               )}
             </tbody>
           </table>
