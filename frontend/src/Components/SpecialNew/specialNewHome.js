@@ -103,6 +103,7 @@ function SpecialNewHome() {
           Set Time Allocations
         </h2>
 
+        {/* Main Table for Instructors */}
         <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "white", boxShadow: "0 0 10px rgba(0,0,0,0.1)" }}>
           <thead style={{ backgroundColor: "#0052cc", color: "white" }}>
             <tr>
@@ -159,21 +160,6 @@ function SpecialNewHome() {
                         </td>
                       </tr>
                     )}
-
-                    {i.sessions && i.sessions.length > 0 && (
-                      <tr>
-                        <td colSpan="5" style={{ padding: "10px", backgroundColor: "#f9f9f9" }}>
-                          <h4>Sessions:</h4>
-                          <ul>
-                            {i.sessions.map((session, index) => (
-                              <li key={index}>
-                                {session.moduleName} ({session.moduleCode}) - {session.startTime} to {session.endTime} at {session.location}
-                              </li>
-                            ))}
-                          </ul>
-                        </td>
-                      </tr>
-                    )}
                   </React.Fragment>
                 );
               })
@@ -186,6 +172,46 @@ function SpecialNewHome() {
             )}
           </tbody>
         </table>
+
+        {/* New Table for Sessions */}
+        <div style={{ marginTop: "50px" }}>
+          <h3 style={{ color: "#003366", fontSize: "24px", textAlign: "center", marginBottom: "20px" }}>
+            Allocated Sessions
+          </h3>
+          <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "white", boxShadow: "0 0 10px rgba(0,0,0,0.1)" }}>
+            <thead style={{ backgroundColor: "#0052cc", color: "white" }}>
+              <tr>
+                <th style={{ padding: "10px" }}>Instructor</th>
+                <th style={{ padding: "10px" }}>Module Name</th>
+                <th style={{ padding: "10px" }}>Module Code</th>
+                <th style={{ padding: "10px" }}>Start Time</th>
+                <th style={{ padding: "10px" }}>End Time</th>
+                <th style={{ padding: "10px" }}>Location</th>
+              </tr>
+            </thead>
+            <tbody>
+              {instructors.flatMap((instructor) =>
+                instructor.sessions?.map((session, index) => (
+                  <tr key={`${instructor._id}-${index}`} style={{ textAlign: "center", borderBottom: "1px solid #ddd" }}>
+                    <td style={{ padding: "10px" }}>{instructor.firstName} {instructor.lastName}</td>
+                    <td>{session.moduleName}</td>
+                    <td>{session.moduleCode}</td>
+                    <td>{session.startTime}</td>
+                    <td>{session.endTime}</td>
+                    <td>{session.location}</td>
+                  </tr>
+                ))
+              )}
+              {instructors.every((instructor) => !instructor.sessions?.length) && (
+                <tr>
+                  <td colSpan="6" style={{ padding: "15px", textAlign: "center" }}>
+                    No sessions allocated yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
