@@ -31,6 +31,9 @@ import ManageAvailability from './Components/Instructor/ManageAvailability';
 import AddInstructor from './Components/Instructor/AddInstructor';
 import UpdateInstructor from './Components/Instructor/UpdateInstructor';
 
+import SpecialNewHome from './Components/SpecialNew/specialNewHome';
+import View from './Components/SpecialNew/view';
+
 
 
 
@@ -76,6 +79,9 @@ function App() {
             <Route path="/addcourse" element={<AddCourse />} />
             <Route path="/updatecourse/:courseCode" element={<UpdateCourse />} />
             <Route path="/deletecourse/:courseCode" element={<DeleteCourse />} />
+
+            <Route path="/specialNewHome" element={<SpecialNewHome />} />
+            <Route path="/view" element={<View />} />
 
         </Routes>
       </React.Fragment>
