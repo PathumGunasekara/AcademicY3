@@ -22,7 +22,7 @@ function Nav() {
           <Link to="/courses" className="nav-link">Courses</Link>
         </li>
         <li className="nav-item">
-          <Link to="/time-allocations" className="nav-link">Time Allocations</Link>
+          <Link to="/specialNewHome" className="nav-link">Time Allocations</Link>
         </li>
       </ul>
     </nav>
