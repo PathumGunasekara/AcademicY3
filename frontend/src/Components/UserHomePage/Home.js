@@ -30,20 +30,7 @@ function Home() {
               platform for students and educators
             </p>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-              <Link
-                to="/login"
-                className="px-8 py-3 bg-white text-blue-900 font-semibold rounded-lg shadow-lg hover:bg-blue-100 transition duration-300 text-lg"
-              >
-                Student Login
-              </Link>
-              <Link
-                to="/register"
-                className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-900 transition duration-300 text-lg"
-              >
-                Register Now
-              </Link>
-            </div>
+
           </div>
 
           {/* Features Section */}
