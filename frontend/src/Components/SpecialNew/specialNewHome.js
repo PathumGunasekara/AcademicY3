@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Nav from "../Nav/Nav";
-import { useNavigate } from "react-router-dom"; // ✅ Import
+import { useNavigate } from "react-router-dom";
 
 function SpecialNewHome() {
   const [instructors, setInstructors] = useState([]);
@@ -15,7 +15,7 @@ function SpecialNewHome() {
     description: ""
   });
 
-  const navigate = useNavigate(); // ✅ Use navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchInstructors();
@@ -59,11 +59,24 @@ function SpecialNewHome() {
   const handleFormSubmit = async (e, instructorId) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/sessions", {
+      const response = await axios.post("http://localhost:5000/api/sessions", {
         ...formData,
         instructorId
       });
       alert("Session successfully created!");
+
+      // Update the instructor's sessions locally
+      setInstructors((prevInstructors) =>
+        prevInstructors.map((instructor) =>
+          instructor._id === instructorId
+            ? {
+                ...instructor,
+                sessions: [...(instructor.sessions || []), response.data.session]
+              }
+            : instructor
+        )
+      );
+
       setShowFormFor(null);
       setFormData({
         startTime: "",
@@ -73,7 +86,6 @@ function SpecialNewHome() {
         location: "",
         description: ""
       });
-      navigate("/view"); // ✅ Redirect to view.js
     } catch (error) {
       console.error("Error creating session:", error);
       alert("Failed to create session.");
@@ -121,12 +133,6 @@ function SpecialNewHome() {
                             Allocate
                           </button>
                         )}
-                        <button
-                          onClick={() => navigate("/view")}
-                          style={{ marginLeft: "10px", backgroundColor: "#007bff", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer" }}
-                        >
-                          View
-                        </button>
                       </td>
                     </tr>
 
@@ -150,6 +156,21 @@ function SpecialNewHome() {
                               Submit
                             </button>
                           </form>
+                        </td>
+                      </tr>
+                    )}
+
+                    {i.sessions && i.sessions.length > 0 && (
+                      <tr>
+                        <td colSpan="5" style={{ padding: "10px", backgroundColor: "#f9f9f9" }}>
+                          <h4>Sessions:</h4>
+                          <ul>
+                            {i.sessions.map((session, index) => (
+                              <li key={index}>
+                                {session.moduleName} ({session.moduleCode}) - {session.startTime} to {session.endTime} at {session.location}
+                              </li>
+                            ))}
+                          </ul>
                         </td>
                       </tr>
                     )}
