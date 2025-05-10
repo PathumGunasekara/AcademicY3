@@ -136,7 +136,8 @@ const AddExam = () => {
       <h1 style={{
         textAlign: "center",
         color: "#333",
-        marginBottom: "20px"
+        marginBottom: "20px",
+        fontSize: "36px" 
       }}>Add Exam</h1>
       <form onSubmit={handleSubmit} style={{
         display: "flex",
