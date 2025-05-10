@@ -64,7 +64,7 @@ function ManageAvailability() {
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "20px", backgroundColor: "#F1F1F1" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "30px", color: "#003366" }}>Manage Instructor Availability</h2>
+      <h2 style={{ textAlign: "center", marginBottom: "30px", color: "#003366" ,fontSize: "36px" }}>Manage Instructor Availability</h2>
       
       {/* Instructor Selection */}
       <select
@@ -95,21 +95,29 @@ function ManageAvailability() {
           </h4>
           
           <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-            <input
-              type="text"
-              placeholder="Day (e.g., Monday)"
-              className="form-control"
-              value={newSlot.day}
-              onChange={(e) => setNewSlot({ ...newSlot, day: e.target.value })}
-              style={{
-                padding: "10px",
-                fontSize: "16px",
-                borderRadius: "5px",
-                border: "1px solid #003366",
-                flex: "1",
-                backgroundColor: "#E6F2FF",
-              }}
-            />
+            <select
+  className="form-control"
+  value={newSlot.day}
+  onChange={(e) => setNewSlot({ ...newSlot, day: e.target.value })}
+  style={{
+    padding: "10px",
+    fontSize: "16px",
+    borderRadius: "5px",
+    border: "1px solid #003366",
+    flex: "1",
+    backgroundColor: "#E6F2FF",
+  }}
+>
+  <option value="" disabled>Select a day</option>
+  <option value="Monday">Monday</option>
+  <option value="Tuesday">Tuesday</option>
+  <option value="Wednesday">Wednesday</option>
+  <option value="Thursday">Thursday</option>
+  <option value="Friday">Friday</option>
+  <option value="Saturday">Saturday</option>
+  <option value="Sunday">Sunday</option>
+</select>
+
             <input
               type="time"
               className="form-control"

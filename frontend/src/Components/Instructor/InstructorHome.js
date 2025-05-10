@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { confirmAlert } from "react-confirm-alert"; // Popup for delete confirmation
-import "react-confirm-alert/src/react-confirm-alert.css"; // Importing styles for confirmAlert
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Nav from "../Nav/Nav";
 
 function InstructorHome() {
   const [instructors, setInstructors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // NEW
 
   useEffect(() => {
-    // Fetch instructors from the backend
     axios
       .get("http://localhost:5000/instructors")
       .then((response) => {
@@ -22,7 +22,6 @@ function InstructorHome() {
       });
   }, []);
 
-  // Check if instructor is available based on current date and time
   const getAvailabilityStatus = (availability) => {
     if (!availability || availability.length === 0) {
       return "Not Available";
@@ -30,13 +29,12 @@ function InstructorHome() {
 
     const currentDate = new Date();
     const currentDay = currentDate.toLocaleString("en-us", { weekday: "long" });
-    const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes(); // Convert to minutes
+    const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes();
 
     for (let slot of availability) {
       if (slot.day === currentDay) {
         const [startHour, startMinute] = slot.startTime.split(":").map(Number);
         const [endHour, endMinute] = slot.endTime.split(":").map(Number);
-
         const startTimeInMinutes = startHour * 60 + startMinute;
         const endTimeInMinutes = endHour * 60 + endMinute;
 
@@ -48,7 +46,6 @@ function InstructorHome() {
     return "Not Available";
   };
 
-  // Delete instructor
   const deleteInstructor = (id) => {
     confirmAlert({
       title: "Confirm Delete",
@@ -68,14 +65,24 @@ function InstructorHome() {
               });
           },
         },
-        {
-          label: "No",
-        },
+        { label: "No" },
       ],
     });
   };
 
-  // Generate PDF report without ID
+  // Filter instructors by searchTerm
+  const filteredInstructors = instructors.filter((instructor) => {
+    const fullName = `${instructor.firstName} ${instructor.lastName}`.toLowerCase();
+    return (
+      fullName.includes(searchTerm.toLowerCase()) ||
+      instructor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      instructor.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      instructor.faculty.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      getAvailabilityStatus(instructor.availability).toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
+  // Use filteredInstructors in PDF generation
   const generateReport = () => {
     const doc = new jsPDF();
 
@@ -94,16 +101,16 @@ function InstructorHome() {
 
     doc.line(14, 46, 200, 46);
 
-    if (instructors.length > 0) {
+    if (filteredInstructors.length > 0) {
       autoTable(doc, {
         startY: 51,
-        head: [["Name", "Email", "Phone", "Faculty", "Availability"]], // Removed ID from headers
-        body: instructors.map((instructor) => [
-          `${instructor.firstName} ${instructor.lastName}`, // Name
-          instructor.email, // Email
-          instructor.phone, // Phone
-          instructor.faculty, // Faculty
-          getAvailabilityStatus(instructor.availability), // Availability Status
+        head: [["Name", "Email", "Phone", "Faculty", "Availability"]],
+        body: filteredInstructors.map((instructor) => [
+          `${instructor.firstName} ${instructor.lastName}`,
+          instructor.email,
+          instructor.phone,
+          instructor.faculty,
+          getAvailabilityStatus(instructor.availability),
         ]),
         headStyles: { fillColor: [41, 87, 141], textColor: [255, 255, 255] },
         bodyStyles: { fontSize: 10 },
@@ -130,61 +137,70 @@ function InstructorHome() {
       }}>
         <Nav />
       </div>
-      <div style={{
-        marginTop: "80px", // Adjust this value based on your Nav height
-        padding: "30px",
-        borderRadius: "8px"
-      }}>
-      </div>
-      <h2 style={{ color: "#004080", marginBottom: "25px", fontSize: "28px", textAlign: "center" }}>Instructor Management</h2>
-      <div style={{ marginBottom: "25px", textAlign: "center" }}>
-        <Link
-          to="/addinstructor"
+      <div style={{ marginTop: "80px", padding: "30px", borderRadius: "8px" }}></div>
+      <h2 style={{ color: "#004080", marginBottom: "25px", fontSize: "36px" , textAlign: "center" }}>
+        Instructor Management
+      </h2>
+
+      {/* Search Box */}
+      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <input
+          type="text"
+          placeholder="Search by name, email, phone, faculty or availability..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           style={{
-            padding: "12px 25px",
-            backgroundColor: "#0052cc",
-            color: "white",
-            borderRadius: "8px",
+            width: "50%",
+            padding: "10px",
             fontSize: "16px",
-            textDecoration: "none",
-            marginRight: "15px",
-            transition: "background-color 0.3s ease",
+            borderRadius: "8px",
+            border: "1px solid #ccc"
           }}
+        />
+      </div>
+
+      <div style={{ marginBottom: "25px", textAlign: "center" }}>
+        <Link to="/addinstructor" style={{
+          padding: "12px 25px",
+          backgroundColor: "#0052cc",
+          color: "white",
+          borderRadius: "8px",
+          fontSize: "16px",
+          textDecoration: "none",
+          marginRight: "15px",
+          transition: "background-color 0.3s ease"
+        }}
           onMouseOver={(e) => (e.target.style.backgroundColor = "#0044cc")}
           onMouseOut={(e) => (e.target.style.backgroundColor = "#0052cc")}
         >
           Add New Instructor
         </Link>
-        <Link
-          to="/manage-availability"
-          style={{
-            padding: "12px 25px",
-            backgroundColor: "#0066cc",
-            color: "white",
-            borderRadius: "8px",
-            fontSize: "16px",
-            textDecoration: "none",
-            transition: "background-color 0.3s ease",
-          }}
+        <Link to="/manage-availability" style={{
+          padding: "12px 25px",
+          backgroundColor: "#0066cc",
+          color: "white",
+          borderRadius: "8px",
+          fontSize: "16px",
+          textDecoration: "none",
+          transition: "background-color 0.3s ease"
+        }}
           onMouseOver={(e) => (e.target.style.backgroundColor = "#0057b8")}
           onMouseOut={(e) => (e.target.style.backgroundColor = "#0066cc")}
         >
           Manage Availability
         </Link>
-        <button
-          onClick={generateReport}
-          style={{
-            padding: "12px 25px",
-            backgroundColor: "#17a2b8",
-            color: "white",
-            borderRadius: "8px",
-            fontSize: "16px",
-            marginTop: "10px",
-            border: "none",
-            cursor: "pointer",
-            transition: "background-color 0.3s ease",
-            marginLeft: "15px",
-          }}
+        <button onClick={generateReport} style={{
+          padding: "12px 25px",
+          backgroundColor: "#17a2b8",
+          color: "white",
+          borderRadius: "8px",
+          fontSize: "16px",
+          marginTop: "10px",
+          border: "none",
+          cursor: "pointer",
+          transition: "background-color 0.3s ease",
+          marginLeft: "15px"
+        }}
           onMouseOver={(e) => (e.target.style.backgroundColor = "#138496")}
           onMouseOut={(e) => (e.target.style.backgroundColor = "#17a2b8")}
         >
@@ -204,7 +220,7 @@ function InstructorHome() {
           </tr>
         </thead>
         <tbody>
-          {instructors.map((instructor) => (
+          {filteredInstructors.map((instructor) => (
             <tr key={instructor._id} style={{ borderBottom: "1px solid #eee", backgroundColor: "#fafafa" }}>
               <td style={{ padding: "15px", fontSize: "15px" }}>{instructor.firstName} {instructor.lastName}</td>
               <td style={{ padding: "15px", fontSize: "15px" }}>{instructor.email}</td>
@@ -212,34 +228,30 @@ function InstructorHome() {
               <td style={{ padding: "15px", fontSize: "15px" }}>{instructor.faculty}</td>
               <td style={{ padding: "15px", fontSize: "15px" }}>{getAvailabilityStatus(instructor.availability)}</td>
               <td style={{ padding: "15px" }}>
-                <Link
-                  to={`/updateinstructor/${instructor._id}`}
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor: "#28a745",
-                    color: "white",
-                    borderRadius: "5px",
-                    fontSize: "14px",
-                    textDecoration: "none",
-                    marginRight: "10px",
-                    transition: "background-color 0.3s ease",
-                  }}
+                <Link to={`/updateinstructor/${instructor._id}`} style={{
+                  padding: "8px 16px",
+                  backgroundColor: "#28a745",
+                  color: "white",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                  textDecoration: "none",
+                  marginRight: "10px",
+                  transition: "background-color 0.3s ease"
+                }}
                   onMouseOver={(e) => (e.target.style.backgroundColor = "#218838")}
                   onMouseOut={(e) => (e.target.style.backgroundColor = "#28a745")}
                 >
                   Update
                 </Link>
-                <button
-                  onClick={() => deleteInstructor(instructor._id)}
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    borderRadius: "5px",
-                    fontSize: "14px",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
+                <button onClick={() => deleteInstructor(instructor._id)} style={{
+                  padding: "8px 16px",
+                  backgroundColor: "#dc3545",
+                  color: "white",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                  border: "none",
+                  cursor: "pointer"
+                }}
                   onMouseOver={(e) => (e.target.style.backgroundColor = "#c82333")}
                   onMouseOut={(e) => (e.target.style.backgroundColor = "#dc3545")}
                 >

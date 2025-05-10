@@ -20,6 +20,7 @@ const fetchHandler = async () => {
 
 function StudentDetails() {
   const [students, setStudents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchHandler().then((data) => setStudents(data.students));
@@ -37,6 +38,11 @@ function StudentDetails() {
     }
   };
 
+  const filteredStudents = students.filter(student => {
+    const combined = `${student.Id} ${student.Name} ${student.DateOfBirth} ${student.Gender} ${student.Phone} ${student.Email} ${student.Address} ${student.Course}`.toLowerCase();
+    return combined.includes(searchTerm.toLowerCase());
+  });
+
   const generateReport = () => {
     const doc = new jsPDF();
     doc.setFontSize(22);
@@ -50,12 +56,12 @@ function StudentDetails() {
     doc.text(`Date: ${currentDate}`, 14, 36);
     doc.text(`Time: ${currentTime}`, 14, 42);
     doc.line(14, 46, 200, 46);
-    
-    if (students.length > 0) {
+
+    if (filteredStudents.length > 0) {
       autoTable(doc, {
         startY: 51,
         head: [['ID', 'Name', 'Date of Birth', 'Gender', 'Phone', 'Email', 'Address', 'Course']],
-        body: students.map(student => [
+        body: filteredStudents.map(student => [
           student.Id,
           student.Name,
           student.DateOfBirth,
@@ -74,7 +80,7 @@ function StudentDetails() {
     } else {
       doc.text("No student details available.", 14, 56);
     }
-    
+
     doc.text("Signature: _____________________", 14, doc.lastAutoTable?.finalY + 20 || 76);
     doc.save(`Student_Details_Report_${currentDate}.pdf`);
   };
@@ -83,8 +89,18 @@ function StudentDetails() {
     <div>
       <Nav />
       <StudentNav />
-      <h4 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '30px', fontWeight: 'bold', color: '#2c3e50' }}>
-  Student Details</h4>
+      <h4 style={{ textAlign: 'center', marginBottom: '20px', fontSize: "36px", fontWeight: 'bold', color: '#2c3e50' }}>
+        Student Details
+      </h4>
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Search students..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: '10px', width: '300px', fontSize: '16px' }}
+        />
+      </div>
       <button onClick={generateReport} style={{ display: 'block', margin: '0 auto 20px', padding: '10px', backgroundColor: 'blue', color: 'white', border: 'none', cursor: 'pointer' }}>
         Download PDF Report
       </button>
@@ -103,8 +119,8 @@ function StudentDetails() {
           </tr>
         </thead>
         <tbody>
-          {students.length > 0 ? (
-            students.map((student, i) => (
+          {filteredStudents.length > 0 ? (
+            filteredStudents.map((student, i) => (
               <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#f2f2f2' : 'white' }}>
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Id}</td>
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{student.Name}</td>

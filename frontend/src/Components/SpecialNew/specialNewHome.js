@@ -4,6 +4,7 @@ import Nav from "../Nav/Nav";
 
 function SpecialNewHome() {
   const [instructors, setInstructors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // ✅ Search term
   const [showFormFor, setShowFormFor] = useState(null);
   const [formData, setFormData] = useState(initialFormData());
   const [editing, setEditing] = useState({ instructorId: null, sessionIndex: null });
@@ -78,11 +79,9 @@ function SpecialNewHome() {
           const newSessions = [...(inst.sessions || [])];
 
           if (editing.instructorId === instructorId && editing.sessionIndex !== null) {
-            // Edit mode
             newSessions[editing.sessionIndex] = { ...formData };
             allSessions[instructorId] = newSessions;
           } else {
-            // Add mode
             newSessions.push({ ...formData });
             allSessions[instructorId] = newSessions;
           }
@@ -131,6 +130,40 @@ function SpecialNewHome() {
     });
   };
 
+  // ✅ Filter instructors and their sessions
+  const filteredInstructors = instructors.map(inst => ({
+    ...inst,
+    sessions: (inst.sessions || []).filter(s => {
+      const combined = `${inst.firstName} ${inst.lastName} ${s.moduleName} ${s.moduleCode} ${s.location} ${s.description}`.toLowerCase();
+      return combined.includes(searchTerm.toLowerCase());
+    })
+  })).filter(inst => {
+    const nameMatch = `${inst.firstName} ${inst.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
+    return nameMatch || inst.sessions.length > 0;
+  });
+
+  // ✅ CSV Download
+  const downloadCSV = () => {
+    const headers = ["Instructor", "Module", "Code", "Start", "End", "Location", "Description"];
+    const rows = filteredInstructors.flatMap(inst =>
+      inst.sessions.map(s => [
+        `${inst.firstName} ${inst.lastName}`,
+        s.moduleName,
+        s.moduleCode,
+        s.startTime,
+        s.endTime,
+        s.location,
+        s.description
+      ])
+    );
+    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "filtered_sessions.csv";
+    a.click();
+  };
+
   return (
     <div style={{ fontFamily: "Arial", backgroundColor: "#f4f7fb", minHeight: "100vh" }}>
       <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000 }}>
@@ -138,7 +171,18 @@ function SpecialNewHome() {
       </div>
 
       <div style={{ marginTop: 90, padding: 30 }}>
-        <h2 style={{ textAlign: "center", color: "#003366" }}>Set Time Allocations</h2>
+        <h2 style={{ textAlign: "center", color: "#003366",fontSize: "36px" }}>Set Time Allocations</h2>
+
+        {/* ✅ Search input */}
+        <div style={{ marginBottom: 20 }}>
+          <input
+            type="text"
+            placeholder="Search by name, module, code, etc."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: "100%", padding: 10, fontSize: 16, border: "1px solid #ccc", borderRadius: 4 }}
+          />
+        </div>
 
         <table style={{ width: "100%", background: "#fff", borderCollapse: "collapse", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
           <thead style={{ backgroundColor: "#0052cc", color: "#fff" }}>
@@ -147,7 +191,7 @@ function SpecialNewHome() {
             </tr>
           </thead>
           <tbody>
-            {instructors.map(inst => {
+            {filteredInstructors.map(inst => {
               const status = getAvailabilityStatus(inst.availability);
               return (
                 <React.Fragment key={inst._id}>
@@ -201,7 +245,11 @@ function SpecialNewHome() {
         </table>
 
         <div style={{ marginTop: 50 }}>
-          <h3 style={{ textAlign: "center", color: "#003366" }}>Allocated Sessions</h3>
+         <h3 style={{ textAlign: "center", color: "#003366", fontSize: "36px" }}>Allocated Sessions</h3>
+          <button onClick={downloadCSV} style={{ marginBottom: 10, background: "#0052cc", color: "#fff", padding: "6px 12px", borderRadius: 4 }}>
+            Download Report
+          </button>
+
           <table style={{ width: "100%", background: "#fff", borderCollapse: "collapse", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}>
             <thead style={{ backgroundColor: "#0052cc", color: "#fff" }}>
               <tr>
@@ -209,7 +257,7 @@ function SpecialNewHome() {
               </tr>
             </thead>
             <tbody>
-              {instructors.flatMap(inst =>
+              {filteredInstructors.flatMap(inst =>
                 (inst.sessions || []).map((s, idx) => (
                   <tr key={`${inst._id}-${idx}`} style={{ textAlign: "center" }}>
                     <td>{inst.firstName} {inst.lastName}</td>
@@ -229,7 +277,7 @@ function SpecialNewHome() {
                   </tr>
                 ))
               )}
-              {instructors.every(i => !i.sessions?.length) && (
+              {filteredInstructors.every(i => !i.sessions?.length) && (
                 <tr><td colSpan="7" style={{ textAlign: "center", padding: 20 }}>No sessions allocated.</td></tr>
               )}
             </tbody>

@@ -127,7 +127,8 @@ function AddStudent() {
                 color: '#003366',
                 marginBottom: '30px',
                 textTransform: 'uppercase',
-                letterSpacing: '1px'
+                letterSpacing: '1px',
+                fontSize: "36px" 
             }}>Add Student</h1>
             <form onSubmit={handleSubmit} style={{ 
                 width: '60%', 

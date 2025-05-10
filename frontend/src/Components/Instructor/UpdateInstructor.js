@@ -127,7 +127,7 @@ function UpdateInstructor() {
       borderRadius: '10px', 
       boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' 
     }}>
-      <h2 style={{ textAlign: 'center', color: '#003366', marginBottom: '20px' }}>Update Instructor</h2>
+      <h2 style={{ textAlign: 'center', color: '#003366', marginBottom: '20px',fontSize: "36px"  }}>Update Instructor</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
           <label style={{ fontWeight: 'bold' }}>First Name</label><br />

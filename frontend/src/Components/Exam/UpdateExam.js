@@ -169,7 +169,8 @@ const UpdateExam = () => {
       <h1 style={{
         textAlign: "center",
         color: "#333",
-        marginBottom: "20px"
+        marginBottom: "20px",
+        fontSize: "36px" 
       }}>Update Exam</h1>
       <form onSubmit={handleSubmit} style={{
         display: "flex",

@@ -123,6 +123,7 @@ function UpdateStudent() {
         textAlign: 'center', 
         color: '#003366',
         marginBottom: '30px',
+        fontSize: "36px",
         textTransform: 'uppercase',
         letterSpacing: '1px'
       }}>Update Student</h1>
